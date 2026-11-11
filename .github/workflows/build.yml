@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Install dependencies
         run: brew install ldid xz make
@@ -24,15 +26,6 @@ jobs:
           base64 -D -i /tmp/k.b64 -o /tmp/k.xz
           xz -d -c /tmp/k.xz > /tmp/k.patch
           git apply --exclude='.github/workflows/build.yml' --verbose /tmp/k.patch
-
-      - name: Commit applied source changes
-        if: always()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "feat: kayoko:// URL scheme + word-selection search button [skip ci]" || echo "nothing to commit"
-          git push
 
       - name: Setup Theos (roothide + SDKs)
         run: |
@@ -47,9 +40,21 @@ jobs:
           ./build.sh roothide
 
       - name: Upload deb
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: kayoko-roothide-deb
           path: packages/*.deb
           if-no-files-found: error
+
+      - name: Commit applied source changes
+        continue-on-error: true
+        run: |
+          set -x
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B main
+          git add -A
+          git commit -m "feat: kayoko:// URL scheme + word-selection search button [skip ci]" || echo "nothing to commit"
+          git fetch origin main || true
+          git rebase --autostash origin/main || (git rebase --abort || true)
+          git push origin main || echo "push failed, code still built"
