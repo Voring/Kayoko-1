@@ -46,9 +46,24 @@ jobs:
         run: |
           export THEOS="$HOME/theos"
           chmod +x ./build.sh
-          ./build.sh roothide
+          set -o pipefail
+          ./build.sh roothide 2>&1 | tee /tmp/build.log
+
+      - name: Publish build log
+        if: always()
+        continue-on-error: true
+        run: |
+          if [ ! -f /tmp/build.log ]; then echo "no log" > build-log.txt; fi
+          { echo ''''``````'; tail -n 300 /tmp/build.log | sed 's/[[:cntrl:]]//g'; echo ''''``````'; } > build-log.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add build-log.txt
+          git commit -m "ci: build log [skip ci]" || true
+          git pull --rebase || true
+          git push || true
 
       - name: Upload deb artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: kayoko-roothide-deb
@@ -56,19 +71,11 @@ jobs:
           if-no-files-found: error
 
       - name: Release deb
+        if: success()
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: Kayoko roothide build ${{ github.run_number }}
-          body: Automated roothide build with kayoko:// URL scheme (LaunchServices hooks) and word-selection search button.
+          body: Automated roothide build with kayoko:// URL scheme and word-selection search button.
           files: packages/*.deb
           fail_on_unmatched_files: true
-
-      - name: Commit applied source
-        continue-on-error: true
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "feat: hook LaunchServices for kayoko:// interception [skip ci]" || echo "nothing"
-          git push origin main || echo "push failed"
