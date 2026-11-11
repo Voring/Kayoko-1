@@ -1,0 +1,54 @@
+name: Build Kayoko
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install ldid xz make
+
+      - name: Apply source changes
+        run: |
+          curl -sSL -o /tmp/k.b64 https://raw.githubusercontent.com/Voring/Kayoko/main/patches/kayoko-changes.b64
+          base64 -D -i /tmp/k.b64 -o /tmp/k.xz
+          xz -d -c /tmp/k.xz > /tmp/k.patch
+          git apply --exclude='.github/workflows/build.yml' --verbose /tmp/k.patch
+
+      - name: Setup Theos (roothide + SDKs)
+        run: |
+          git clone --recursive --depth 1 https://github.com/roothide/theos.git "$HOME/theos"
+          git clone --depth 1 https://github.com/theos/sdks.git "$HOME/theos/sdks"
+          ls "$HOME/theos/sdks" | head -30
+
+      - name: Build roothide package
+        run: |
+          export THEOS="$HOME/theos"
+          chmod +x ./build.sh
+          ./build.sh roothide
+
+      - name: Upload deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: kayoko-roothide-deb
+          path: packages/*.deb
+          if-no-files-found: error
+
+      - name: Commit applied changes back
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: apply kayoko url-scheme + search changes [skip ci]" || echo "nothing to commit"
+          git push
