@@ -5,6 +5,7 @@
 
 #import "KayokoHelperHookInstaller.h"
 #import "KayokoPreferenceKeys.h"
+#import "KayokoURLSchemeHooks.h"
 
 @implementation KayokoHelperHookInstaller
 
@@ -28,6 +29,7 @@
 
 + (void)installApplicationHooksWithActivationMethod:(NSUInteger)activationMethod {
     [self installActivationHooksWithActivationMethod:activationMethod];
+    [KayokoURLSchemeHookInstaller installHooks];
 }
 
 + (void)installSpringBoardActivationHooksWithActivationMethod:(NSUInteger)activationMethod {
@@ -41,6 +43,7 @@
     } else if (spotlightSwipeUpOnly) {
         [self installKeyboardExtensionSwipeUpHooksForSpotlightOnly:YES];
     }
+    [KayokoURLSchemeHookInstaller installHooks];
 }
 
 @end

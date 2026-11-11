@@ -66,6 +66,10 @@ NS_ASSUME_NONNULL_END
                    addTarget:self
                       action:@selector(handleShareButtonPressed)
             forControlEvents:UIControlEventTouchUpInside];
+        [[[_wordSelectionView headerView] searchButton]
+                   addTarget:self
+                      action:@selector(handleSearchButtonPressed)
+            forControlEvents:UIControlEventTouchUpInside];
         [[[_wordSelectionView headerView] editButton]
                    addTarget:self
                       action:@selector(handleEditButtonPressed)
@@ -80,6 +84,7 @@ NS_ASSUME_NONNULL_END
           [weakSelf updateTranslationButtonState];
           [weakSelf updateBookButtonState];
           [weakSelf updateShareButtonState];
+          [weakSelf updateSearchButtonState];
           if ([weakSelf selectionChangedHandler]) {
               [weakSelf selectionChangedHandler]();
           }
@@ -169,6 +174,15 @@ NS_ASSUME_NONNULL_END
                            imageSize:kKayokoBackButtonImageSize
                            tintColor:[UIColor labelColor]];
     [[headerView shareButton] setHidden:NO];
+    [headerView updateStyleForButton:[headerView searchButton]
+                       withImageName:@"magnifyingglass"
+                           imageSize:kKayokoBackButtonImageSize
+                           tintColor:[UIColor labelColor]];
+    [[headerView searchButton] setHidden:NO];
+    [[headerView searchButton]
+        setAccessibilityLabel:[[KayokoPasteboardManager localizationBundle] localizedStringForKey:@"Search"
+                                                                                            value:nil
+                                                                                            table:@"Tweak"]];
     [[headerView leadingButton]
         setAccessibilityLabel:[[KayokoPasteboardManager localizationBundle] localizedStringForKey:@"Back"
                                                                                             value:nil
@@ -193,6 +207,7 @@ NS_ASSUME_NONNULL_END
     [self updateTranslationButtonState];
     [self updateBookButtonState];
     [self updateShareButtonState];
+    [self updateSearchButtonState];
 }
 
 #pragma mark - Dismissal
@@ -259,6 +274,54 @@ NS_ASSUME_NONNULL_END
     }
 }
 
+- (void)handleSearchButtonPressed {
+    NSString *text = [self textForActions];
+    if ([text length] == 0) {
+        return;
+    }
+
+    NSArray<NSURL *> *searchURLs = [self searchURLsForText:text];
+    if ([searchURLs count] == 0) {
+        return;
+    }
+
+    UIApplication *application = [UIApplication sharedApplication];
+    NSURL *primaryURL = [searchURLs firstObject];
+    NSURL *fallbackURL = ([searchURLs count] > 1) ? [searchURLs lastObject] : nil;
+    [application openURL:primaryURL
+                  options:@{}
+        completionHandler:^(BOOL success) {
+          if (!success && fallbackURL) {
+              [[UIApplication sharedApplication] openURL:fallbackURL options:@{} completionHandler:nil];
+          }
+        }];
+    [[self delegate] wordSelectionViewController:self triggerHapticFeedbackWithStyle:UIImpactFeedbackStyleLight];
+}
+
+- (NSArray<NSURL *> *)searchURLsForText:(NSString *)text {
+    NSCharacterSet *allowed = [NSCharacterSet characterSetWithCharactersInString:
+                                   @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"];
+    NSString *encoded = [text stringByAddingPercentEncodingWithAllowedCharacters:allowed];
+
+    NSMutableArray<NSURL *> *URLs = [NSMutableArray array];
+    NSString *systemSearch = [NSString stringWithFormat:@"x-web-search://?%@", (encoded ?: @"")];
+    NSURL *systemURL = [NSURL URLWithString:systemSearch];
+    if (systemURL) {
+        [URLs addObject:systemURL];
+    }
+
+    NSURLComponents *components = [[NSURLComponents alloc] init];
+    [components setScheme:@"https"];
+    [components setHost:@"www.bing.com"];
+    [components setPath:@"/search"];
+    [components setQueryItems:@[ [NSURLQueryItem queryItemWithName:@"q" value:text] ]];
+    NSURL *fallbackURL = [components URL];
+    if (fallbackURL) {
+        [URLs addObject:fallbackURL];
+    }
+    return URLs;
+}
+
 - (void)handleShareButtonPressed {
     NSString *text = [self textForActions];
     if ([text length] == 0) {
@@ -293,6 +356,7 @@ NS_ASSUME_NONNULL_END
     [[[[self wordSelectionView] headerView] translationButton] setHidden:YES];
     [[[[self wordSelectionView] headerView] bookButton] setHidden:YES];
     [[[[self wordSelectionView] headerView] shareButton] setHidden:YES];
+    [[[[self wordSelectionView] headerView] searchButton] setHidden:YES];
     [self setEditButtonHidden:YES];
     [[self wordSelectionView] setHidden:YES];
     [[self wordSelectionView] setUserInteractionEnabled:YES];
@@ -424,6 +488,17 @@ NS_ASSUME_NONNULL_END
     [translationButton setAlpha:enabled ? 1.0 : 0.35];
     [translationButton
         setAccessibilityLabel:[[KayokoPasteboardManager localizationBundle] localizedStringForKey:@"Translate"
+                                                                                            value:nil
+                                                                                            table:@"Tweak"]];
+}
+
+- (void)updateSearchButtonState {
+    UIButton *searchButton = [[[self wordSelectionView] headerView] searchButton];
+    BOOL enabled = [[self textForActions] length] > 0;
+    [searchButton setEnabled:enabled];
+    [searchButton setAlpha:enabled ? 1.0 : 0.35];
+    [searchButton
+        setAccessibilityLabel:[[KayokoPasteboardManager localizationBundle] localizedStringForKey:@"Search"
                                                                                             value:nil
                                                                                             table:@"Tweak"]];
 }

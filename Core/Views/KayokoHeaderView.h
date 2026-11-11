@@ -25,6 +25,7 @@ static CGFloat const kKayokoHeaderContentSpacing = 4;
 @property(nonatomic, strong, readonly) UIButton *translationButton;
 @property(nonatomic, strong, readonly) UIButton *bookButton;
 @property(nonatomic, strong, readonly) UIButton *shareButton;
+@property(nonatomic, strong, readonly) UIButton *searchButton;
 @property(nonatomic, strong, readonly) UISegmentedControl *historySegmentedControl;
 @property(nonatomic, assign, getter=isHistorySwitcherVisible) BOOL historySwitcherVisible;
 

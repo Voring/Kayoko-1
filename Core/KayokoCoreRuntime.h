@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)startLockStateObserver;
 
 - (void)show;
+/// 外部唤起：可指定初始视图（history / favorites）与预填的搜索词。
+- (void)showWithHistoryKey:(nullable NSString *)historyKey searchText:(nullable NSString *)searchText;
 - (void)hide;
 - (void)hideWithStandardDismissAnimation;
 - (void)hideForExternalRequest;

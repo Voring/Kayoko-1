@@ -57,6 +57,8 @@ NS_ASSUME_NONNULL_BEGIN
                                    restoresFirstResponder:(BOOL)restoresFirstResponder
                                       targetContentOffset:(CGPoint)targetContentOffset;
 - (void)cancelSearchWithCompletion:(nullable void (^)(void))completion;
+/// 外部唤起时以指定文本直接进入搜索状态。
+- (void)beginSearchWithText:(NSString *)text;
 - (void)cancelSearchWithAnimations:(nullable void (^)(void))animations completion:(nullable void (^)(void))completion;
 - (BOOL)isActiveSearchFirstResponder;
 - (void)resignSearchFirstResponder;

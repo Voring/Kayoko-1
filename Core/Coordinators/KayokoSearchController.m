@@ -994,6 +994,22 @@ NS_ASSUME_NONNULL_END
     [self bootstrapSearchTokenSourcesIfNeeded];
 }
 
+- (void)beginSearchWithText:(NSString *)text {
+    if ([text length] == 0) {
+        return;
+    }
+
+    UISearchBar *searchBar = [self activeSearchBar];
+    [searchBar setText:text];
+
+    if ([self isSearchActive]) {
+        [self applySearchFromSearchBar:searchBar];
+        return;
+    }
+
+    [self beginSearchIfNeeded];
+}
+
 - (void)beginSearchIfNeeded {
     if ([self isSearchActive]) {
         return;

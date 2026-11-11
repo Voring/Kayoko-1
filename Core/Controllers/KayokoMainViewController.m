@@ -105,6 +105,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) BOOL interactiveTransientReturnWasPreview;
 @property(nonatomic, assign) BOOL didRestoreSearchDuringInteractiveTransientReturn;
 
+#pragma mark - External Presentation
+
+@property(nonatomic, copy, nullable) NSString *pendingExternalHistoryKey;
+@property(nonatomic, copy, nullable) NSString *pendingExternalSearchText;
+
 #pragma mark - Note Editing
 
 @property(nonatomic, strong, nullable) KayokoPasteboardItem *noteEditingItem;
@@ -2783,6 +2788,45 @@ NS_ASSUME_NONNULL_END
     [[self historyController] preloadHistoryWithCompletion:nil];
 }
 
+#pragma mark - External Presentation
+
+- (void)prepareForExternalPresentationWithHistoryKey:(NSString *)historyKey searchText:(NSString *)searchText {
+    [self setPendingExternalHistoryKey:([historyKey length] > 0) ? historyKey : nil];
+    [self setPendingExternalSearchText:([searchText length] > 0) ? searchText : nil];
+}
+
+- (void)applyPendingExternalPresentation {
+    [self applyPendingExternalHistoryKeyIfNeeded];
+    [self applyPendingExternalSearchTextIfNeeded];
+}
+
+- (void)applyPendingExternalHistoryKeyIfNeeded {
+    NSString *historyKey = [self pendingExternalHistoryKey];
+    [self setPendingExternalHistoryKey:nil];
+    if ([historyKey length] == 0) {
+        return;
+    }
+    if ([[self effectiveActiveHistoryKey] isEqualToString:historyKey]) {
+        return;
+    }
+    if ([[self panelPresentationController] isAnimating] || [self isShowingClearConfirmation]) {
+        return;
+    }
+
+    BOOL targetIsFavorites = [historyKey isEqualToString:kKayokoHistoryKeyFavorites];
+    [[[self mainView] headerView] setSelectedHistorySegmentIndex:(targetIsFavorites ? 1 : 0)];
+    [self switchToHistoryKey:historyKey animated:YES];
+}
+
+- (void)applyPendingExternalSearchTextIfNeeded {
+    NSString *searchText = [self pendingExternalSearchText];
+    [self setPendingExternalSearchText:nil];
+    if ([searchText length] == 0) {
+        return;
+    }
+    [[self searchController] beginSearchWithText:searchText];
+}
+
 - (void)show {
     if ([[self panelPresentationController] isAnimating] || [self preparingToShow]) {
         return;
@@ -2805,9 +2849,13 @@ NS_ASSUME_NONNULL_END
     [[[self historyListViewController] tableView] reloadData];
     [[[self favoritesListViewController] tableView] reloadData];
 
-    NSString *initialHistoryKey = [self historyKeyForInitialViewMode];
+    NSString *pendingHistoryKey = [self pendingExternalHistoryKey];
+    [self setPendingExternalHistoryKey:nil];
+    NSString *initialHistoryKey = [pendingHistoryKey length] > 0 ? pendingHistoryKey : [self historyKeyForInitialViewMode];
     if ([initialHistoryKey length] > 0) {
         [[self historyController] setActiveHistoryKey:initialHistoryKey];
+        [[[self mainView] headerView]
+            setSelectedHistorySegmentIndex:([initialHistoryKey isEqualToString:kKayokoHistoryKeyFavorites] ? 1 : 0)];
     }
 
     NSString *historyKey = [self effectiveActiveHistoryKey];
@@ -2827,6 +2875,7 @@ NS_ASSUME_NONNULL_END
                               [[self searchController] attachToListViewController:[self activeListViewController]
                                                                    hidesSearchBar:YES];
                               [[self panelPresentationController] showPanelWithCompletion:^{
+                                [self applyPendingExternalSearchTextIfNeeded];
                                 [self executePendingExternalHideRequestIfReady];
                               }];
                             }];

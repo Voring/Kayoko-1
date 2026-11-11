@@ -48,6 +48,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isNoteEditing;
 - (BOOL)isPreviewTextEditing;
 - (BOOL)shouldSuppressSystemMultitaskingGesture;
+/// 外部唤起前调用，记录下一次显示要使用的视图与搜索词。
+- (void)prepareForExternalPresentationWithHistoryKey:(nullable NSString *)historyKey
+                                          searchText:(nullable NSString *)searchText;
+/// 面板已经显示时，立即应用上一步记录的外部唤起参数。
+- (void)applyPendingExternalPresentation;
 - (void)show;
 - (void)hide;
 - (void)hideRestoringFocus;

@@ -15,10 +15,12 @@
 #import "KayokoNotificationKeys.h"
 #import "KayokoPreferenceKeys.h"
 #import "KayokoSpringBoardHooks.h"
+#import "KayokoURLSchemeHandler.h"
 #import "../Shared/KayokoHookValidation.h"
 #import "KayokoSwipeUpGestureRecognizer.h"
 
 CHDeclareClass(SpringBoard);
+CHDeclareClass(UIApplication);
 CHDeclareClass(FBScene);
 CHDeclareClass(UIStatusBarWindow);
 CHDeclareClass(UIWindowScene);
@@ -36,6 +38,13 @@ CHDeclareClass(_UISystemGestureWindow);
 @interface SpringBoard : UIApplication
 - (void)applicationDidFinishLaunching:(id)application;
 - (NSArray<UIKeyCommand *> *)keyCommands;
+- (BOOL)application:(UIApplication *)application
+             openURL:(NSURL *)URL
+             options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options;
+- (BOOL)application:(UIApplication *)application
+                openURL:(NSURL *)URL
+      sourceApplication:(NSString *)sourceApplication
+             annotation:(id)annotation;
 @end
 
 @interface UIStatusBarWindow : UIWindow
@@ -154,6 +163,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)installRotationObserver;
 + (void)installSceneSettingsHooks;
 + (void)installSystemSwipeUpHooks;
++ (void)installURLSchemeHooks;
 
 @end
 
@@ -325,6 +335,44 @@ CHOptimizedMethod0(self, NSArray<UIKeyCommand *> *, SpringBoard, keyCommands) {
                                                        action:@selector(kayokoHandleExternalKeyboardShortcut:)];
     [command setDiscoverabilityTitle:kKayokoExternalKeyboardDiscoverabilityTitle];
     return keyCommands ? [keyCommands arrayByAddingObject:command] : @[ command ];
+}
+
+#pragma mark - URL Scheme Hooks
+
+CHOptimizedMethod3(self, BOOL, SpringBoard, application, UIApplication *, application, openURL, NSURL *, URL, options,
+                   NSDictionary *, options) {
+    (void)application;
+    if (KayokoURLSchemeInterceptOpenURL(URL, nil)) {
+        return YES;
+    }
+    return CHSuper3(SpringBoard, application, application, openURL, URL, options, options);
+}
+
+CHOptimizedMethod4(self, BOOL, SpringBoard, application, UIApplication *, application, openURL, NSURL *, URL,
+                   sourceApplication, NSString *, sourceApplication, annotation, id, annotation) {
+    (void)application;
+    (void)sourceApplication;
+    (void)annotation;
+    if (KayokoURLSchemeInterceptOpenURL(URL, nil)) {
+        return YES;
+    }
+    return CHSuper4(SpringBoard, application, application, openURL, URL, sourceApplication, sourceApplication,
+                    annotation, annotation);
+}
+
+CHOptimizedMethod3(self, void, UIApplication, openURL, NSURL *, URL, options, NSDictionary *, options,
+                   completionHandler, KayokoURLSchemeOpenCompletion, completionHandler) {
+    if (KayokoURLSchemeInterceptOpenURL(URL, completionHandler)) {
+        return;
+    }
+    CHSuper3(UIApplication, openURL, URL, options, options, completionHandler, completionHandler);
+}
+
+CHOptimizedMethod1(self, BOOL, UIApplication, openURL, NSURL *, URL) {
+    if (KayokoURLSchemeInterceptOpenURL(URL, nil)) {
+        return YES;
+    }
+    return CHSuper1(UIApplication, openURL, URL);
 }
 
 #pragma mark - Visibility Hooks
@@ -734,6 +782,28 @@ CHOptimizedMethod3(self, void, FBScene, updateSettings, UIApplicationSceneSettin
     }
 }
 
++ (void)installURLSchemeHooks {
+    Class applicationClass = NSClassFromString(@"UIApplication");
+    if (applicationClass) {
+        CHLoadClass(UIApplication);
+        if (KayokoHookMethodMatches(applicationClass, @selector(openURL:options:completionHandler:), "v@:@@@?")) {
+            CHHook3(UIApplication, openURL, options, completionHandler);
+        }
+        if (KayokoHookMethodMatches(applicationClass, @selector(openURL:), "B@:@")) {
+            CHHook1(UIApplication, openURL);
+        }
+    }
+
+    Class springBoardClass = NSClassFromString(@"SpringBoard");
+    if (KayokoHookMethodMatches(springBoardClass, @selector(application:openURL:options:), "B@:@@@")) {
+        CHHook3(SpringBoard, application, openURL, options);
+    }
+    if (KayokoHookMethodMatches(springBoardClass, @selector(application:openURL:sourceApplication:annotation:),
+                                "B@:@@@@")) {
+        CHHook4(SpringBoard, application, openURL, sourceApplication, annotation);
+    }
+}
+
 #pragma mark - Entrypoint
 
 + (void)installHooks {
@@ -751,6 +821,7 @@ CHOptimizedMethod3(self, void, FBScene, updateSettings, UIApplicationSceneSettin
     }
 
     [self installHomeScreenHooks];
+    [self installURLSchemeHooks];
     [self installAppSwitcherHooks];
     [self installLockScreenTransitionHooks];
     [self installSpotlightHooks];

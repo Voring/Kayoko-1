@@ -11,6 +11,7 @@
 #import "KayokoNotificationKeys.h"
 #import "KayokoPasteboardManager.h"
 #import "KayokoSpringBoardHooks.h"
+#import "KayokoURLSchemeServer.h"
 
 #import <CoreFoundation/CoreFoundation.h>
 
@@ -246,6 +247,9 @@ static void kayokoCorePasteTipPreferencesReloadCallback(CFNotificationCenterRef 
         }];
     if (!servesApplicationCatalog) {
         NSLog(@"Kayoko: Unable to start application catalog service");
+    }
+    if (![[KayokoURLSchemeServer sharedServer] start]) {
+        NSLog(@"Kayoko: Unable to start URL scheme service");
     }
     [self addDarwinObserverForName:(__bridge CFStringRef)kKayokoNotificationKeyCoreCheckpointHistory
                           callback:kayokoCoreCheckpointHistoryCallback];

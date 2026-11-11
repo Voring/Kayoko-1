@@ -38,6 +38,11 @@ KayokoPreferences_PRIVATE_FRAMEWORKS += SpringBoardServices
 
 ifeq ($(THEOS_PACKAGE_SCHEME),roothide)
 KayokoPreferences_LIBRARIES += roothide
+KayokoPreferences_LDFLAGS += -Wl,-U,__NSConcreteStackBlock
+KayokoPreferences_LDFLAGS += -Wl,-U,__NSConcreteGlobalBlock
+KayokoPreferences_LDFLAGS += -Wl,-U,__dispatch_main_q
+KayokoPreferences_LDFLAGS += -Wl,-U,___stack_chk_guard
+
 endif
 
 KayokoPreferences_INSTALL_PATH := /Library/PreferenceBundles

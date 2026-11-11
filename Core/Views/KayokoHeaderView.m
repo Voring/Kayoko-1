@@ -33,6 +33,7 @@ static CGFloat const kKayokoSegmentBottomInset = 10;
 @property(nonatomic, strong, readwrite) UIButton *translationButton;
 @property(nonatomic, strong, readwrite) UIButton *bookButton;
 @property(nonatomic, strong, readwrite) UIButton *shareButton;
+@property(nonatomic, strong, readwrite) UIButton *searchButton;
 @property(nonatomic, strong, readwrite) UISegmentedControl *historySegmentedControl;
 
 @end
@@ -139,6 +140,11 @@ static CGFloat const kKayokoSegmentBottomInset = 10;
         [_shareButton setHidden:YES];
         [_trailingButtonStack addArrangedSubview:_shareButton];
         [_shareButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+
+        _searchButton = [[UIButton alloc] init];
+        [_searchButton setHidden:YES];
+        [_trailingButtonStack addArrangedSubview:_searchButton];
+        [_searchButton setTranslatesAutoresizingMaskIntoConstraints:NO];
 
         _openLinkButton = [[UIButton alloc] init];
         [_openLinkButton setHidden:YES];

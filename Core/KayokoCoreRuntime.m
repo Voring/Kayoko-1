@@ -1117,6 +1117,20 @@ NS_ASSUME_NONNULL_END
     }
 }
 
+- (void)showWithHistoryKey:(NSString *)historyKey searchText:(NSString *)searchText {
+    if ([self isPackageMaintenanceMode] || !self.mainViewController) {
+        return;
+    }
+
+    [self.mainViewController prepareForExternalPresentationWithHistoryKey:historyKey searchText:searchText];
+    if (![self panelVisible]) {
+        [self show];
+        return;
+    }
+
+    [self.mainViewController applyPendingExternalPresentation];
+}
+
 - (void)hideWithAnimationStyle:(KayokoPanelHideAnimationStyle)animationStyle {
     if (self.mainViewController && ![self.mainViewController isHidden]) {
         [self.mainViewController hideWithAnimationStyle:animationStyle completion:nil];

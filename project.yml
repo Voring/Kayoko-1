@@ -88,6 +88,7 @@ targets:
         buildPhase: headers
         headerVisibility: project
       - path: Shared/Tags
+      - path: Shared/URLScheme
     settings:
       base:
         DEFINES_MODULE: NO
@@ -109,8 +110,10 @@ targets:
           - "$(SRCROOT)/Core/Models"
           - "$(SRCROOT)/Core/Presentation"
           - "$(SRCROOT)/Core/Views"
+          - "$(SRCROOT)/Core/URLScheme"
           - "$(SRCROOT)/Helper"
           - "$(SRCROOT)/Shared/Tags"
+          - "$(SRCROOT)/Shared/URLScheme"
           - "$(SRCROOT)/Preferences"
         INSTALL_PATH: /Library/MobileSubstrate/DynamicLibraries
         LD_DYLIB_INSTALL_NAME: "@loader_path/.jbroot/Library/MobileSubstrate/DynamicLibraries/KayokoCore.dylib"
@@ -157,6 +160,7 @@ targets:
         excludes:
           - "Makefile"
           - "**/*.plist"
+      - path: Shared/URLScheme
     settings:
       base:
         DEFINES_MODULE: NO
@@ -170,6 +174,7 @@ targets:
         HEADER_SEARCH_PATHS:
           - "$(inherited)"
           - "$(SRCROOT)/Helper"
+          - "$(SRCROOT)/Shared/URLScheme"
           - "$(SRCROOT)/Preferences"
         INSTALL_PATH: /Library/MobileSubstrate/DynamicLibraries
         LD_DYLIB_INSTALL_NAME: "@loader_path/.jbroot/Library/MobileSubstrate/DynamicLibraries/KayokoHelper.dylib"
