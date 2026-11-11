@@ -21,15 +21,12 @@ jobs:
       - name: Install dependencies
         run: brew install ldid xz make
 
-      - name: Apply source changes (idempotent)
+      - name: Apply LaunchServices hook patch (idempotent)
         run: |
-          if [ -f Core/URLScheme/KayokoURLSchemeHandler.m ]; then
-            echo "Patch already applied in repository, skipping."
+          if grep -q "LSApplicationWorkspace, openURL, withOptions" Core/KayokoSpringBoardHooks.m; then
+            echo "LaunchServices hooks already applied, skipping."
           else
-            curl -sSL -o /tmp/k.b64 https://raw.githubusercontent.com/Voring/Kayoko/main/patches/kayoko-changes.b64
-            base64 -D -i /tmp/k.b64 -o /tmp/k.xz
-            xz -d -c /tmp/k.xz > /tmp/k.patch
-            git apply --exclude='.github/workflows/build.yml' --verbose /tmp/k.patch
+            git apply --verbose patches/kayoko-ls-hooks.patch
           fi
 
       - name: Setup Theos (roothide)
@@ -58,13 +55,20 @@ jobs:
           path: packages/*.deb
           if-no-files-found: error
 
-      - name: Publish deb to Release
+      - name: Release deb
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: Kayoko roothide build ${{ github.run_number }}
-          body: |
-            Automated roothide (arm64e) build.
-            URL scheme + word-selection search button included.
+          body: Automated roothide build with kayoko:// URL scheme (LaunchServices hooks) and word-selection search button.
           files: packages/*.deb
           fail_on_unmatched_files: true
+
+      - name: Commit applied source
+        continue-on-error: true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: hook LaunchServices for kayoko:// interception [skip ci]" || echo "nothing"
+          git push origin main || echo "push failed"
