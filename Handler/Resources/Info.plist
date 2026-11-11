@@ -31,6 +31,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>LSBackgroundOnly</key>
+	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -48,6 +50,10 @@
 	<array>
 		<string>arm64</string>
 	</array>
+	<key>UIStatusBarHidden</key>
+	<true/>
+	<key>UILaunchScreen</key>
+	<dict/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
