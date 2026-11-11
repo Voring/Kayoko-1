@@ -21,12 +21,17 @@ jobs:
       - name: Install dependencies
         run: brew install ldid xz make
 
-      - name: Apply source changes
+      - name: Apply source changes (idempotent)
         run: |
-          curl -sSL -o /tmp/k.b64 https://raw.githubusercontent.com/Voring/Kayoko/main/patches/kayoko-changes.b64
-          base64 -D -i /tmp/k.b64 -o /tmp/k.xz
-          xz -d -c /tmp/k.xz > /tmp/k.patch
-          git apply --exclude='.github/workflows/build.yml' --verbose /tmp/k.patch
+          if [ -f Core/URLScheme/KayokoURLSchemeHandler.m ]; then
+            echo "Patch already applied in repository, skipping."
+            grep -n "searchButton" Core/Views/KayokoHeaderView.h || true
+          else
+            curl -sSL -o /tmp/k.b64 https://raw.githubusercontent.com/Voring/Kayoko/main/patches/kayoko-changes.b64
+            base64 -D -i /tmp/k.b64 -o /tmp/k.xz
+            xz -d -c /tmp/k.xz > /tmp/k.patch
+            git apply --exclude='.github/workflows/build.yml' --verbose /tmp/k.patch
+          fi
 
       - name: Setup Theos (roothide + SDKs)
         run: |
@@ -52,9 +57,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B main
           git add -A
-          git commit -m "chore: refresh applied source [skip ci]" || echo "nothing to commit"
-          git fetch origin main || true
-          git rebase --autostash origin/main || (git rebase --abort || true)
+          git commit -m "chore: build artifacts notes [skip ci]" || echo "nothing to commit"
           git push origin main || echo "push failed"
