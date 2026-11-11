@@ -60,15 +60,12 @@ static BOOL KayokoIsTriggerURL(NSURL *URL) {
     if (!([scheme isEqualToString:@"prefs"] || [scheme isEqualToString:@"app-prefs"])) {
         return NO;
     }
-    NSString *all = [[[URL absoluteString] lowercaseString] stringByRemovingPercentEncoding] ?: @"";
-    return [all rangeOfString:@"root=kayoko"].location != NSNotFound;
+    NSString *all = [URL absoluteString];
+    return [all rangeOfString:@"root=Kayoko"].location != NSNotFound ||
+           [all rangeOfString:@"root=kayoko"].location != NSNotFound;
 }
 
 static void KayokoShowPanel(NSURL *URL) {
-    NSString *all = [[[URL absoluteString] lowercaseString] stringByRemovingPercentEncoding] ?: @"";
-    if ([all rangeOfString:@"diag"].location != NSNotFound) {
-        return;
-    }
     KayokoURLSchemeInterceptOpenURL([NSURL URLWithString:[NSString stringWithFormat:@"%@://show", kKayokoURLScheme]], nil);
 }
 
