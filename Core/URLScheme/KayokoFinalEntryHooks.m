@@ -35,7 +35,7 @@ CHDeclareClass(SBApplication);
                         withResult:(id)result;
 @end
 
-@interface UIApplication : NSObject
+@interface UIApplication (KayokoLegacyOpenURL)
 - (BOOL)openURL:(NSURL *)url;
 @end
 
@@ -106,10 +106,11 @@ static void KayokoFinalDeliver(NSURL *URL, NSString *source) {
     KayokoURLSchemeInterceptOpenURL([NSURL URLWithString:[NSString stringWithFormat:@"%@://show", kKayokoURLScheme]], nil);
 }
 
-CHOptimizedMethod11(self, void, FBSystemService, _reallyActivateApplication, id, application, requestID, id, requestID,
-                    options, id, options, source, id, source, originalSource, id, originalSource, isTrusted, BOOL, isTrusted,
-                    sequenceNumber, id, sequenceNumber, cacheGUID, id, cacheGUID, ourSequenceNumber, id, ourSequenceNumber,
-                    ourCacheGUID, id, ourCacheGUID, withResult, id, result) {
+static void (*KayokoReallyActivateOriginal)(id, SEL, id, id, id, id, id, BOOL, id, id, id, id, id) = NULL;
+
+static void KayokoReallyActivateHook(id self, SEL _cmd, id application, id requestID, id options, id source,
+                                     id originalSource, BOOL isTrusted, id sequenceNumber, id cacheGUID,
+                                     id ourSequenceNumber, id ourCacheGUID, id result) {
     NSURL *URL = nil;
     @try {
         if ([options respondsToSelector:@selector(url)]) {
@@ -140,9 +141,10 @@ CHOptimizedMethod11(self, void, FBSystemService, _reallyActivateApplication, id,
         }
         return;
     }
-    CHSuper11(FBSystemService, _reallyActivateApplication, application, requestID, requestID, options, options, source, source,
-              originalSource, originalSource, isTrusted, isTrusted, sequenceNumber, sequenceNumber, cacheGUID, cacheGUID,
-              ourSequenceNumber, ourSequenceNumber, ourCacheGUID, ourCacheGUID, withResult, result);
+    if (KayokoReallyActivateOriginal) {
+        KayokoReallyActivateOriginal(self, _cmd, application, requestID, options, source, originalSource, isTrusted,
+                                     sequenceNumber, cacheGUID, ourSequenceNumber, ourCacheGUID, result);
+    }
 }
 
 CHOptimizedMethod1(self, BOOL, UIApplication, openURL, NSURL *, url) {
@@ -167,8 +169,8 @@ __attribute__((constructor)) static void KayokoFinalEntryHooksEntry(void) {
               CHLoadClass_(&FBSystemService$, fbServiceClass);
               Method reallyMethod = class_getInstanceMethod(fbServiceClass, @selector(_reallyActivateApplication:requestID:options:source:originalSource:isTrusted:sequenceNumber:cacheGUID:ourSequenceNumber:ourCacheGUID:withResult:));
               if (reallyMethod && method_getNumberOfArguments(reallyMethod) == 13) {
-                  CHHook11(FBSystemService, _reallyActivateApplication, requestID, options, source, originalSource, isTrusted,
-                           sequenceNumber, cacheGUID, ourSequenceNumber, ourCacheGUID, withResult);
+                  KayokoReallyActivateOriginal = (void (*)(id, SEL, id, id, id, id, id, BOOL, id, id, id, id, id))method_getImplementation(reallyMethod);
+                  method_setImplementation(reallyMethod, (IMP)KayokoReallyActivateHook);
                   KayokoFinalDiag(@"install: FBSystemService._reallyActivate hook installed");
               } else {
                   KayokoFinalDiag(@"install: FBSystemService._reallyActivate 不存在");
