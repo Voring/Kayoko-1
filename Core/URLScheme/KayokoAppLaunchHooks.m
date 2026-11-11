@@ -2,14 +2,19 @@
 //  KayokoAppLaunchHooks.m
 //  Kayoko
 //
-//  SpringBoard 侧接管 kayoko://，避免拉起占位的 KayokoURLHandler.app（空白界面闪现）。
+//  SpringBoard 侧接管唤起请求，避免拉起占位 App（空白界面闪现）。
 //
-//  三个入口：
+//  触发方式（跟 Prism 一样复用系统 Settings 认领的 Prefs: scheme，不需要额外 App）：
+//    Prefs:root=Kayoko_show     → 主面板
+//    Prefs:root=KayokoPanel     → 主面板
+//    Prefs:root=Kayoko_capture  → 主面板
+//    Prefs:root=Kayoko_diag     → 诊断（直接写剪贴板）
+//    kayoko://show / kayoko://diag（仍然兼容，但需要 handler App 存在）
+//
+//  三个拦截入口：
 //  - LSApplicationWorkspace -openURL:/openURL:withOptions:/openSensitiveURL:withOptions:
 //  - SBWorkspace -_handleOpenApplicationRequest:options:activationSettings:origin:withResult:
 //  - FBSystemService -openApplication:withOptions:originator:requestID:completion:
-//
-//  kayoko://diag 由本层直接写剪贴板，不启动 App。
 //
 
 #import <CaptainHook/CaptainHook.h>
@@ -116,16 +121,57 @@ static void KayokoAppLaunchCopyDiagToPasteboard(void) {
     [UIPasteboard generalPasteboard].string = text;
 }
 
+// Prism 那种做法：复用系统 Settings 认领的 Prefs: scheme，在 SpringBoard 里截住后弹自己的浮窗。
+// 这样不需要额外 App 认领 scheme，也就永远不会拉起占位 App。
+static NSString *KayokoTriggerActionFromPrefsURL(NSURL *URL) {
+    NSString *scheme = [[URL scheme] lowercaseString];
+    if (!([scheme isEqualToString:@"prefs"] || [scheme isEqualToString:@"app-prefs"])) {
+        return nil;
+    }
+    NSURLComponents *components = [NSURLComponents componentsWithURL:URL resolvingAgainstBaseURL:NO];
+    for (NSURLQueryItem *item in [components queryItems]) {
+        if (![[item.name lowercaseString] isEqualToString:@"root"]) {
+            continue;
+        }
+        NSString *value = [item.value lowercaseString] ?: @"";
+        if ([value rangeOfString:@"kayoko"].location == NSNotFound) {
+            continue;
+        }
+        // 裸 root=Kayoko 是 Kayoko 的设置页，不动它。
+        if ([value isEqualToString:@"kayoko"]) {
+            continue;
+        }
+        if ([value rangeOfString:@"diag"].location != NSNotFound) {
+            return @"diag";
+        }
+        return @"show";
+    }
+    return nil;
+}
+
+static NSURL *KayokoNormalizeTriggerURL(NSURL *URL) {
+    if (KayokoURLSchemeIsKayokoURL(URL)) {
+        return URL;
+    }
+    NSString *action = KayokoTriggerActionFromPrefsURL(URL);
+    if ([action length] == 0) {
+        return nil;
+    }
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", kKayokoURLScheme, action]];
+}
+
 static BOOL KayokoHandleURLIfNeeded(NSURL *URL, NSString *source) {
-    if (!KayokoURLSchemeIsKayokoURL(URL)) {
+    NSURL *trigger = KayokoNormalizeTriggerURL(URL);
+    if (!trigger) {
         return NO;
     }
-    NSString *hostOrPath = [[[URL host] ?: @"" lowercaseString] stringByAppendingString:[[URL path] lowercaseString]];
+    NSString *hostOrPath = [[[trigger host] ?: @"" lowercaseString]
+        stringByAppendingString:[[trigger path] lowercaseString]];
     KayokoAppLaunchDiag([NSString stringWithFormat:@"hit %@ url=%@", source, [URL absoluteString]]);
     if ([hostOrPath rangeOfString:@"diag"].location != NSNotFound) {
         KayokoAppLaunchCopyDiagToPasteboard();
     } else {
-        KayokoURLSchemeInterceptOpenURL(URL, nil);
+        KayokoURLSchemeInterceptOpenURL(trigger, nil);
     }
     return YES;
 }
@@ -159,7 +205,7 @@ CHOptimizedMethod5(self, void, FBSystemService, openApplication, id, application
                    id, originator, requestID, unsigned int, requestID, completion, id, completion) {
     NSURL *URL = KayokoURLFromOpenOptions(options);
 
-    if (KayokoURLSchemeIsKayokoURL(URL)) {
+    if (KayokoNormalizeTriggerURL(URL) != nil) {
         KayokoHandleURLIfNeeded(URL, @"FBSystemService.openApplication");
         if (completion) {
             ((void (^)(id, id))completion)(nil, nil);
@@ -175,7 +221,7 @@ CHOptimizedMethod5(self, void, FBSystemService, openApplication, id, application
     }
     if ([appDescription rangeOfString:@"KayokoURLHandler" options:NSCaseInsensitiveSearch].location != NSNotFound ||
         [appDescription rangeOfString:@"mlgm.kayoko" options:NSCaseInsensitiveSearch].location != NSNotFound) {
-        // 不带 kayoko:// 的启动请求：这才是空白占位 App 的来源，直接拦掉。
+        // 不带我们自己 URL 的 handler App 启动请求：一律拦掉，避免空白界面。
         KayokoAppLaunchDiag(@"blocked: 无 URL 的 handler App 启动请求");
         if (completion) {
             ((void (^)(id, id))completion)(nil, nil);
@@ -192,7 +238,7 @@ CHOptimizedMethod5(self, void, FBSystemService, openApplication, id, application
 CHOptimizedMethod5(self, void, SBWorkspace, _handleOpenApplicationRequest, id, request, options, id, options,
                    activationSettings, id, settings, origin, id, origin, withResult, id, result) {
     NSURL *URL = KayokoURLFromOpenOptions(options);
-    if (KayokoURLSchemeIsKayokoURL(URL)) {
+    if (KayokoNormalizeTriggerURL(URL) != nil) {
         KayokoHandleURLIfNeeded(URL, @"SBWorkspace.handleOpenApplicationRequest");
         if (result) {
             ((void (^)(id, id))result)(nil, nil);

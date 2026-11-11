@@ -8,7 +8,5 @@ SUBPROJECTS += Core
 SUBPROJECTS += Helper
 SUBPROJECTS += Preferences
 SUBPROJECTS += Updater
-SUBPROJECTS += Handler
 
 include $(THEOS)/makefiles/common.mk
-include $(THEOS_MAKE_PATH)/aggregate.mk
