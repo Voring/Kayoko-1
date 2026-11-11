@@ -16,7 +16,6 @@
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 
-#import "../../Shared/KayokoHookValidation.h"
 #import "../../Shared/URLScheme/KayokoURLSchemeProtocol.h"
 #import "KayokoURLSchemeHandler.h"
 
@@ -65,8 +64,12 @@ static void KayokoInstallAppLaunchHooks(void) {
 
     CHLoadClass_(&FBSystemService$, systemServiceClass);
 
+    // 不用严格的类型编码比对：iOS 16 上 requestID 的实际类型在 I / Q 之间变化过，
+    // 严格比对会导致钩子被静默跳过。参数全走 8 字节槽位，类型宽窄不影响 ABI，
+    // 所以只校验“确实是 6 参方法”即可。
     SEL activateSelector = @selector(activateApplication:requestID:options:source:originalSource:withResult:);
-    if (KayokoHookMethodMatches(systemServiceClass, activateSelector, "v@:@I@@@@?")) {
+    Method activateMethod = class_getInstanceMethod(systemServiceClass, activateSelector);
+    if (activateMethod && method_getNumberOfArguments(activateMethod) == 8) {
         CHHook6(FBSystemService, activateApplication, requestID, options, source, originalSource, withResult);
     }
 }
@@ -79,11 +82,9 @@ __attribute__((constructor)) static void KayokoAppLaunchHooksEntry(void) {
         // FrontBoard / SpringBoard 的类在插件加载时可能还没全部 realize，
         // 先立即尝试一次，再在主队列上补一次。
         KayokoInstallAppLaunchHooks();
-        if (NSClassFromString(@"FBSystemService") == nil) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
-                           dispatch_get_main_queue(), ^{
-                             KayokoInstallAppLaunchHooks();
-                           });
-        }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
+                       dispatch_get_main_queue(), ^{
+                         KayokoInstallAppLaunchHooks();
+                       });
     }
 }
