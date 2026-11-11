@@ -145,15 +145,26 @@ CHOptimizedMethod5(self, void, FBSystemService, openApplication, id, application
                    id, originator, requestID, unsigned int, requestID, completion, id, completion) {
     NSURL *URL = KayokoURLFromOpenOptions(options);
 
+    // 只关心“我们自己的 App”和 kayoko://，其他 App 的启动完全不记录，避免刷屏。
     NSString *bundleID = nil;
+    NSString *appDescription = nil;
+    NSString *originatorDescription = nil;
     @try {
         bundleID = [application respondsToSelector:@selector(bundleIdentifier)] ? [application bundleIdentifier] : nil;
+        appDescription = [application description];
+        originatorDescription = [originator description];
     } @catch (__unused NSException *exception) {
-        bundleID = nil;
+        appDescription = nil;
+        originatorDescription = nil;
     }
-    if ([bundleID hasPrefix:@"com.mlgm.kayoko"] || KayokoURLSchemeIsKayokoURL(URL)) {
-        KayokoAppLaunchDiag([NSString stringWithFormat:@"call bid=%@ url=%@", bundleID ?: @"(nil)",
-                                                       [URL absoluteString] ?: @"(nil)"]);
+    BOOL looksLikeOurApp = [appDescription rangeOfString:@"KayokoURLHandler" options:NSCaseInsensitiveSearch].location !=
+                                NSNotFound ||
+                            [appDescription rangeOfString:@"mlgm.kayoko" options:NSCaseInsensitiveSearch].location !=
+                                NSNotFound;
+    if (looksLikeOurApp || KayokoURLSchemeIsKayokoURL(URL)) {
+        KayokoAppLaunchDiag([NSString stringWithFormat:@"call bid=%@ url=%@\n    app=%@\n    from=%@",
+                                                       bundleID ?: @"(nil)", [URL absoluteString] ?: @"(nil)",
+                                                       appDescription ?: @"(nil)", originatorDescription ?: @"(nil)"]);
     }
 
     if (KayokoURLSchemeIsKayokoURL(URL)) {
@@ -169,6 +180,15 @@ CHOptimizedMethod5(self, void, FBSystemService, openApplication, id, application
         }
 
         KayokoURLSchemeInterceptOpenURL(URL, nil);
+        if (completion) {
+            ((void (^)(id, id))completion)(nil, nil);
+        }
+        return;
+    }
+
+    if (looksLikeOurApp) {
+        // 没有带 kayoko:// 的启动请求：这正是空白的 KayokoURLHandler 界面来源，直接拦掉。
+        KayokoAppLaunchDiag(@"blocked: 无 URL 的 handler App 启动请求");
         if (completion) {
             ((void (^)(id, id))completion)(nil, nil);
         }
