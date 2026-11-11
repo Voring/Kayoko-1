@@ -4,11 +4,10 @@
 //
 //  SpringBoard 侧接管 kayoko://，避免拉起占位的 KayokoURLHandler.app（空白界面闪现）。
 //
-//  两个入口：
+//  三个入口：
 //  - LSApplicationWorkspace -openURL:/openURL:withOptions:/openSensitiveURL:withOptions:
-//    （ARC 菜单、分屏插件等常驻 SpringBoard 的调用方走这里）
+//  - SBWorkspace -_handleOpenApplicationRequest:options:activationSettings:origin:withResult:
 //  - FBSystemService -openApplication:withOptions:originator:requestID:completion:
-//    （Shortcuts 等经 SpringBoard 的请求走这里）
 //
 //  kayoko://diag 由本层直接写剪贴板，不启动 App。
 //
@@ -23,11 +22,20 @@
 
 CHDeclareClass(FBSystemService);
 CHDeclareClass(LSApplicationWorkspace);
+CHDeclareClass(SBWorkspace);
 
 @interface LSApplicationWorkspace : NSObject
 - (BOOL)openURL:(NSURL *)url;
 - (BOOL)openURL:(NSURL *)url withOptions:(id)options;
 - (BOOL)openSensitiveURL:(NSURL *)url withOptions:(id)options;
+@end
+
+@interface SBWorkspace : NSObject
+- (void)_handleOpenApplicationRequest:(id)request
+                               options:(id)options
+                    activationSettings:(id)settings
+                                origin:(id)origin
+                            withResult:(id)result;
 @end
 
 @interface FBSystemService : NSObject
@@ -179,6 +187,22 @@ CHOptimizedMethod5(self, void, FBSystemService, openApplication, id, application
              requestID, completion, completion);
 }
 
+#pragma mark - SBWorkspace（ScreenCore / ARC 菜单等 SpringBoard 内部调用）
+
+CHOptimizedMethod5(self, void, SBWorkspace, _handleOpenApplicationRequest, id, request, options, id, options,
+                   activationSettings, id, settings, origin, id, origin, withResult, id, result) {
+    NSURL *URL = KayokoURLFromOpenOptions(options);
+    if (KayokoURLSchemeIsKayokoURL(URL)) {
+        KayokoHandleURLIfNeeded(URL, @"SBWorkspace.handleOpenApplicationRequest");
+        if (result) {
+            ((void (^)(id, id))result)(nil, nil);
+        }
+        return;
+    }
+    CHSuper5(SBWorkspace, _handleOpenApplicationRequest, request, options, options, activationSettings, settings, origin,
+             origin, withResult, result);
+}
+
 #pragma mark - Install
 
 static void KayokoInstallLSWorkspaceHooks(void) {
@@ -205,6 +229,23 @@ static void KayokoInstallLSWorkspaceHooks(void) {
     KayokoAppLaunchDiag([NSString stringWithFormat:@"install: LSApplicationWorkspace 挂钩 %ld 个", (long)hooked]);
 }
 
+static void KayokoInstallWorkspaceHook(void) {
+    Class workspaceClass = NSClassFromString(@"SBWorkspace");
+    if (!workspaceClass) {
+        KayokoAppLaunchDiag(@"install: SBWorkspace 类不存在");
+        return;
+    }
+    CHLoadClass_(&SBWorkspace$, workspaceClass);
+    Method requestMethod =
+        class_getInstanceMethod(workspaceClass, @selector(_handleOpenApplicationRequest:options:activationSettings:origin:withResult:));
+    if (requestMethod && method_getNumberOfArguments(requestMethod) == 7) {
+        CHHook5(SBWorkspace, _handleOpenApplicationRequest, options, activationSettings, origin, withResult);
+        KayokoAppLaunchDiag(@"install: SBWorkspace hook installed");
+    } else {
+        KayokoAppLaunchDiag(@"install: SBWorkspace 未挂上");
+    }
+}
+
 static void KayokoInstallAppLaunchHooks(void) {
     Class systemServiceClass = NSClassFromString(@"FBSystemService");
     if (!systemServiceClass) {
@@ -229,6 +270,7 @@ __attribute__((constructor)) static void KayokoAppLaunchHooksEntry(void) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
           KayokoInstallLSWorkspaceHooks();
+          KayokoInstallWorkspaceHook();
           KayokoInstallAppLaunchHooks();
         });
     }
