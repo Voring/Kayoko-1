@@ -121,32 +121,60 @@ static void KayokoAppLaunchCopyDiagToPasteboard(void) {
     [UIPasteboard generalPasteboard].string = text;
 }
 
+static NSString *KayokoQueryValue(NSString *rest, NSString *key) {
+    for (NSString *pair in [rest componentsSeparatedByString:@"&"]) {
+        NSArray *kv = [pair componentsSeparatedByString:@"="];
+        if ([kv count] < 2) {
+            continue;
+        }
+        NSString *name = [[kv[0] stringByRemovingPercentEncoding] ?: kv[0] lowercaseString];
+        if (![name isEqualToString:[key lowercaseString]]) {
+            continue;
+        }
+        NSString *value = [kv[1] stringByRemovingPercentEncoding] ?: kv[1];
+        return value;
+    }
+    return nil;
+}
+
 // Prism 那种做法：复用系统 Settings 认领的 Prefs: scheme，在 SpringBoard 里截住后弹自己的浮窗。
-// 这样不需要额外 App 认领 scheme，也就永远不会拉起占位 App。
+// 注意 iOS 的写法是 prefs:root=X（不是 ?root=X），所以不能用 queryItems 解析。
 static NSString *KayokoTriggerActionFromPrefsURL(NSURL *URL) {
     NSString *scheme = [[URL scheme] lowercaseString];
     if (!([scheme isEqualToString:@"prefs"] || [scheme isEqualToString:@"app-prefs"])) {
         return nil;
     }
-    NSURLComponents *components = [NSURLComponents componentsWithURL:URL resolvingAgainstBaseURL:NO];
-    for (NSURLQueryItem *item in [components queryItems]) {
-        if (![[item.name lowercaseString] isEqualToString:@"root"]) {
-            continue;
-        }
-        NSString *value = [item.value lowercaseString] ?: @"";
-        if ([value rangeOfString:@"kayoko"].location == NSNotFound) {
-            continue;
-        }
-        // 裸 root=Kayoko 是 Kayoko 的设置页，不动它。
-        if ([value isEqualToString:@"kayoko"]) {
-            continue;
-        }
-        if ([value rangeOfString:@"diag"].location != NSNotFound) {
-            return @"diag";
-        }
-        return @"show";
+
+    NSString *rest = [URL resourceSpecifier] ?: @"";
+    while ([rest hasPrefix:@"/"]) {
+        rest = [rest substringFromIndex:1];
     }
-    return nil;
+    NSString *root = KayokoQueryValue(rest, @"root");
+    if ([root length] == 0) {
+        // 兜底：整串里直接找 root=
+        NSString *all = [URL absoluteString] ?: @"";
+        NSRange range = [all rangeOfString:@"root=" options:NSCaseInsensitiveSearch];
+        if (range.location == NSNotFound) {
+            return nil;
+        }
+        root = [all substringFromIndex:NSMaxRange(range)];
+        if ([root rangeOfString:@"&"].location != NSNotFound) {
+            root = [root substringToIndex:[root rangeOfString:@"&"].location];
+        }
+    }
+
+    NSString *value = [root lowercaseString] ?: @"";
+    if ([value rangeOfString:@"kayoko"].location == NSNotFound) {
+        return nil;
+    }
+    // 裸 root=Kayoko 是 Kayoko 的设置页，不动它。
+    if ([value isEqualToString:@"kayoko"]) {
+        return nil;
+    }
+    if ([value rangeOfString:@"diag"].location != NSNotFound) {
+        return @"diag";
+    }
+    return @"show";
 }
 
 static NSURL *KayokoNormalizeTriggerURL(NSURL *URL) {
