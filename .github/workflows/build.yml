@@ -25,6 +25,15 @@ jobs:
           xz -d -c /tmp/k.xz > /tmp/k.patch
           git apply --exclude='.github/workflows/build.yml' --verbose /tmp/k.patch
 
+      - name: Commit applied source changes
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: kayoko:// URL scheme + word-selection search button [skip ci]" || echo "nothing to commit"
+          git push
+
       - name: Setup Theos (roothide + SDKs)
         run: |
           git clone --recursive --depth 1 https://github.com/roothide/theos.git "$HOME/theos"
@@ -38,17 +47,9 @@ jobs:
           ./build.sh roothide
 
       - name: Upload deb
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: kayoko-roothide-deb
           path: packages/*.deb
           if-no-files-found: error
-
-      - name: Commit applied changes back
-        if: success()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "chore: apply kayoko url-scheme + search changes [skip ci]" || echo "nothing to commit"
-          git push
