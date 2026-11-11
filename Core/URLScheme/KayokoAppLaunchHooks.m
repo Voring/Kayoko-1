@@ -2,14 +2,11 @@
 //  KayokoAppLaunchHooks.m
 //  Kayoko
 //
-//  在 SpringBoard 侧拦截“为 URL 启动 App”的请求，避免 kayoko:// 打开时
-//  闪一下空白 App。
+//  SpringBoard 侧接管 kayoko:// 的 App 启动请求，避免闪一下空白 App。
 //
-//  iOS 16.4.1 上 FBSystemService 的真实入口是：
-//  - openApplication:withOptions:originator:requestID:completion:
-//  URL 藏在 options.url 里。拦截后就地执行面板动作，不放行原始启动请求。
-//
-//  kayoko://diag 也在这一层直接处理：把诊断信息写进系统剪贴板，不启动 App。
+//  iOS 16.4.1 上 FBSystemService 的入口：
+//  - openApplication:withOptions:originator:requestID:completion:（Shortcuts 走这里）
+//  - handleActions:source:withResult:（LaunchServices action，第三方插件常走这里）
 //
 
 #import <CaptainHook/CaptainHook.h>
@@ -23,6 +20,7 @@
 CHDeclareClass(FBSystemService);
 
 @interface FBSystemService : NSObject
+- (void)handleActions:(id)actions source:(id)source withResult:(id)result;
 - (void)openApplication:(id)application
             withOptions:(id)options
               originator:(id)originator
@@ -91,11 +89,62 @@ static NSURL *KayokoURLFromOpenOptions(id options) {
     return nil;
 }
 
+static void KayokoAppLaunchCopyDiagToPasteboard(void) {
+    NSString *body = [NSString stringWithContentsOfFile:KayokoAppLaunchDiagPath()
+                                                encoding:NSUTF8StringEncoding
+                                                   error:nil];
+    NSString *text = [NSString stringWithFormat:@"=== Kayoko URL diag (springboard) ===\n%@"
+                                                @"handled by SpringBoard at %@ (App 未被启动)\n",
+                                                body ?: @"(diag.txt 为空)\n", [NSDate date]];
+    [UIPasteboard generalPasteboard].string = text;
+}
+
+// handleActions 收到的 payload 里如果带 kayoko URL，就地接管。
+CHOptimizedMethod3(self, void, FBSystemService, handleActions, id, actions, source, id, source, withResult, id, result) {
+    NSString *description = nil;
+    @try {
+        description = [actions description];
+    } @catch (__unused NSException *exception) {
+        description = nil;
+    }
+    if ([description rangeOfString:@"kayoko" options:NSCaseInsensitiveSearch].location != NSNotFound) {
+        KayokoAppLaunchDiag([NSString stringWithFormat:@"hit handleActions: %@", description]);
+        NSURL *URL = nil;
+        @try {
+            NSRange range = [description rangeOfString:@"kayoko://"];
+            if (range.location != NSNotFound) {
+                NSString *tail = [description substringFromIndex:range.location];
+                NSCharacterSet *stop = [NSCharacterSet characterSetWithCharactersInString:@"\"' <>,;)}\n"];
+                NSRange stopRange = [tail rangeOfCharacterFromSet:stop];
+                if (stopRange.location != NSNotFound) {
+                    tail = [tail substringToIndex:stopRange.location];
+                }
+                URL = [NSURL URLWithString:tail];
+            }
+        } @catch (__unused NSException *exception) {
+            URL = nil;
+        }
+
+        if (KayokoURLSchemeIsKayokoURL(URL)) {
+            NSString *hostOrPath = [[[URL host] ?: @"" lowercaseString] stringByAppendingString:[[URL path] lowercaseString]];
+            if ([hostOrPath rangeOfString:@"diag"].location != NSNotFound) {
+                KayokoAppLaunchCopyDiagToPasteboard();
+            } else {
+                KayokoURLSchemeInterceptOpenURL(URL, nil);
+            }
+            if (result) {
+                ((void (^)(id, id))result)(nil, nil);
+            }
+            return;
+        }
+    }
+    CHSuper3(FBSystemService, handleActions, actions, source, source, withResult, result);
+}
+
 CHOptimizedMethod5(self, void, FBSystemService, openApplication, id, application, withOptions, id, options, originator,
                    id, originator, requestID, unsigned int, requestID, completion, id, completion) {
     NSURL *URL = KayokoURLFromOpenOptions(options);
 
-    // 只用“我们自己的 App + kayoko scheme”这一种请求写日志，避免刷屏导致卡顿。
     NSString *bundleID = nil;
     @try {
         bundleID = [application respondsToSelector:@selector(bundleIdentifier)] ? [application bundleIdentifier] : nil;
@@ -110,17 +159,9 @@ CHOptimizedMethod5(self, void, FBSystemService, openApplication, id, application
     if (KayokoURLSchemeIsKayokoURL(URL)) {
         KayokoAppLaunchDiag([NSString stringWithFormat:@"hit openApplication url=%@", [URL absoluteString]]);
 
-        // kayoko://diag：完全不启动 App，直接把诊断信息写进系统剪贴板，
-        // 这样在“拦截已生效”的情况下也能把状态回传。
         NSString *hostOrPath = [[[URL host] ?: @"" lowercaseString] stringByAppendingString:[[URL path] lowercaseString]];
         if ([hostOrPath rangeOfString:@"diag"].location != NSNotFound) {
-            NSString *body = [NSString stringWithContentsOfFile:KayokoAppLaunchDiagPath()
-                                                        encoding:NSUTF8StringEncoding
-                                                           error:nil];
-            NSString *text = [NSString stringWithFormat:@"=== Kayoko URL diag (springboard) ===\n%@"
-                                                        @"handled by SpringBoard at %@ (App 未被启动)\n",
-                                                        body ?: @"(diag.txt 为空)\n", [NSDate date]];
-            [UIPasteboard generalPasteboard].string = text;
+            KayokoAppLaunchCopyDiagToPasteboard();
             if (completion) {
                 ((void (^)(id, id))completion)(nil, nil);
             }
@@ -149,16 +190,21 @@ static void KayokoInstallAppLaunchHooks(void) {
 
     SEL openSelector = @selector(openApplication:withOptions:originator:requestID:completion:);
     Method openMethod = class_getInstanceMethod(systemServiceClass, openSelector);
-    if (!openMethod) {
-        KayokoAppLaunchDiag(@"install: openApplication method NOT found");
-        return;
+    if (openMethod && method_getNumberOfArguments(openMethod) == 7) {
+        CHHook5(FBSystemService, openApplication, withOptions, originator, requestID, completion);
+        KayokoAppLaunchDiag(@"install: openApplication hook installed");
+    } else {
+        KayokoAppLaunchDiag(@"install: openApplication NOT hooked");
     }
-    if (method_getNumberOfArguments(openMethod) != 7) {
-        KayokoAppLaunchDiag(@"install: openApplication argc mismatch");
-        return;
+
+    SEL actionsSelector = @selector(handleActions:source:withResult:);
+    Method actionsMethod = class_getInstanceMethod(systemServiceClass, actionsSelector);
+    if (actionsMethod && method_getNumberOfArguments(actionsMethod) == 5) {
+        CHHook3(FBSystemService, handleActions, source, withResult);
+        KayokoAppLaunchDiag(@"install: handleActions hook installed");
+    } else {
+        KayokoAppLaunchDiag(@"install: handleActions NOT hooked");
     }
-    CHHook5(FBSystemService, openApplication, withOptions, originator, requestID, completion);
-    KayokoAppLaunchDiag(@"install: hook installed");
 }
 
 __attribute__((constructor)) static void KayokoAppLaunchHooksEntry(void) {
