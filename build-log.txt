@@ -1,0 +1,1 @@
+; tail -n 300 /tmp/build.log | sed s/[[:cntrl:]]//g; echo ``````
