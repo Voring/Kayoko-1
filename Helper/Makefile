@@ -8,6 +8,7 @@ KayokoHelper_FILES += KayokoHelperProcessContext.m
 KayokoHelper_FILES += KayokoHelperHookInstaller.m
 KayokoHelper_FILES += KayokoHelperLocalization.m
 KayokoHelper_FILES += KayokoHelperRuntime.m
+KayokoHelper_FILES += KayokoScriptPasteVerification.m
 KayokoHelper_FILES += KayokoPredictionBarHooks.m
 KayokoHelper_FILES += KayokoCalloutMenuHooks.m
 KayokoHelper_FILES += KayokoInputSwitcherHooks.mm
@@ -15,7 +16,6 @@ KayokoHelper_FILES += KayokoDictationHooks.m
 KayokoHelper_FILES += KayokoSwipeUpGestureRecognizer.m
 KayokoHelper_FILES += KayokoSwipeUpHooks.m
 KayokoHelper_FILES += KayokoURLSchemeHooks.m
-KayokoHelper_FILES += ../Shared/URLScheme/KayokoURLSchemeBridge.m
 KayokoHelper_FILES += ../Shared/URLScheme/KayokoURLSchemeProtocol.m
 
 KayokoHelper_CFLAGS += -fobjc-arc

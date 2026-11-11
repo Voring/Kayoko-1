@@ -10,6 +10,7 @@
 #import "KayokoActivitySharePresenter.h"
 #import "KayokoPasteboardItem.h"
 #import "KayokoPasteboardManager.h"
+#import "KayokoCoreRuntime.h"
 #import "KayokoTextActionPresenter.h"
 #import "KayokoWordSelectionView.h"
 
@@ -58,10 +59,6 @@ NS_ASSUME_NONNULL_END
                    addTarget:self
                       action:@selector(handleTranslationButtonPressed)
             forControlEvents:UIControlEventTouchUpInside];
-        [[[_wordSelectionView headerView] bookButton]
-                   addTarget:self
-                      action:@selector(handleBookButtonPressed)
-            forControlEvents:UIControlEventTouchUpInside];
         [[[_wordSelectionView headerView] shareButton]
                    addTarget:self
                       action:@selector(handleShareButtonPressed)
@@ -82,7 +79,7 @@ NS_ASSUME_NONNULL_END
           [weakSelf updateActionButtonState];
           [weakSelf updateSelectionActionButtonStates];
           [weakSelf updateTranslationButtonState];
-          [weakSelf updateBookButtonState];
+          [weakSelf updateScriptButtonState];
           [weakSelf updateShareButtonState];
           [weakSelf updateSearchButtonState];
           if ([weakSelf selectionChangedHandler]) {
@@ -124,6 +121,7 @@ NS_ASSUME_NONNULL_END
 - (void)showWordSelectionWithItem:(KayokoPasteboardItem *)item
                  sourceHistoryKey:(NSString *)sourceHistoryKey
                automaticallyPaste:(BOOL)automaticallyPaste {
+    [self.textActionPresenter dismissActionsAnimated:NO];
     [self setSourceItem:item];
     [self setSourceHistoryKey:sourceHistoryKey];
 
@@ -159,16 +157,11 @@ NS_ASSUME_NONNULL_END
                                                                                             value:nil
                                                                                             table:@"Tweak"]];
     [[headerView selectionActionButton] setHidden:NO];
-    NSString *translationImageName = [UIImage systemImageNamed:@"character.bubble"] ? @"character.bubble" : @"globe";
-    [headerView updateStyleForButton:[headerView translationButton]
-                       withImageName:translationImageName
+    [headerView updateStyleForButton:[headerView scriptButton]
+                       withImageName:@"terminal"
                            imageSize:kKayokoBackButtonImageSize
                            tintColor:[UIColor labelColor]];
-    [headerView updateStyleForButton:[headerView bookButton]
-                       withImageName:@"book.closed"
-                           imageSize:kKayokoBackButtonImageSize
-                           tintColor:[UIColor labelColor]];
-    [[headerView bookButton] setHidden:NO];
+    [[headerView scriptButton] setHidden:NO];
     [headerView updateStyleForButton:[headerView shareButton]
                        withImageName:@"square.and.arrow.up"
                            imageSize:kKayokoBackButtonImageSize
@@ -205,7 +198,7 @@ NS_ASSUME_NONNULL_END
     [self updateActionButtonState];
     [self updateSelectionActionButtonStates];
     [self updateTranslationButtonState];
-    [self updateBookButtonState];
+    [self updateScriptButtonState];
     [self updateShareButtonState];
     [self updateSearchButtonState];
 }
@@ -268,12 +261,6 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)handleBookButtonPressed {
-    if ([[self textActionPresenter] presentLookupForText:[self textForActions] fromController:self]) {
-        [[self delegate] wordSelectionViewController:self triggerHapticFeedbackWithStyle:UIImpactFeedbackStyleLight];
-    }
-}
-
 - (void)handleSearchButtonPressed {
     NSString *text = [self textForActions];
     if ([text length] == 0) {
@@ -295,7 +282,11 @@ NS_ASSUME_NONNULL_END
               [[UIApplication sharedApplication] openURL:fallbackURL options:@{} completionHandler:nil];
           }
         }];
+
     [[self delegate] wordSelectionViewController:self triggerHapticFeedbackWithStyle:UIImpactFeedbackStyleLight];
+
+    // 搜索已经交给系统的 x-web-search:// 或浏览器，面板继续浮在上面会挡内容，这里直接收起。
+    [[KayokoCoreRuntime sharedRuntime] hideWithStandardDismissAnimation];
 }
 
 - (NSArray<NSURL *> *)searchURLsForText:(NSString *)text {
@@ -321,7 +312,6 @@ NS_ASSUME_NONNULL_END
     }
     return URLs;
 }
-
 - (void)handleShareButtonPressed {
     NSString *text = [self textForActions];
     if ([text length] == 0) {
@@ -354,7 +344,7 @@ NS_ASSUME_NONNULL_END
     [[[[self wordSelectionView] headerView] selectionActionButton] setHidden:YES];
     [[[[self wordSelectionView] headerView] openLinkButton] setHidden:YES];
     [[[[self wordSelectionView] headerView] translationButton] setHidden:YES];
-    [[[[self wordSelectionView] headerView] bookButton] setHidden:YES];
+    [[[[self wordSelectionView] headerView] scriptButton] setHidden:YES];
     [[[[self wordSelectionView] headerView] shareButton] setHidden:YES];
     [[[[self wordSelectionView] headerView] searchButton] setHidden:YES];
     [self setEditButtonHidden:YES];
@@ -363,10 +353,6 @@ NS_ASSUME_NONNULL_END
     [[self wordSelectionView] reset];
     [self setSourceItem:nil];
     [self setSourceHistoryKey:nil];
-}
-
-- (BOOL)shouldSuppressExternalHideRequest {
-    return [[self textActionPresenter] shouldSuppressExternalHideRequest];
 }
 
 #pragma mark - Edit
@@ -503,13 +489,13 @@ NS_ASSUME_NONNULL_END
                                                                                             table:@"Tweak"]];
 }
 
-- (void)updateBookButtonState {
-    UIButton *bookButton = [[[self wordSelectionView] headerView] bookButton];
-    BOOL enabled = [[self textForActions] length] > 0;
-    [bookButton setEnabled:enabled];
-    [bookButton setAlpha:enabled ? 1.0 : 0.35];
-    [bookButton setAccessibilityLabel:[[KayokoPasteboardManager localizationBundle]
-                                          localizedStringForKey:@"Look Up" value:nil table:@"Tweak"]];
+- (void)updateScriptButtonState {
+    UIButton *scriptButton = [[[self wordSelectionView] headerView] scriptButton];
+    BOOL enabled = (self.hasSelectedText ? self.selectedText : self.sourceItem.content).length > 0;
+    [scriptButton setEnabled:enabled];
+    [scriptButton setAlpha:enabled ? 1.0 : 0.35];
+    [scriptButton setAccessibilityLabel:[[KayokoPasteboardManager localizationBundle]
+                                          localizedStringForKey:@"Scripts" value:nil table:@"Tweak"]];
 }
 
 @end
