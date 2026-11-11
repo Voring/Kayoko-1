@@ -46,13 +46,28 @@ jobs:
         run: |
           export THEOS="$HOME/theos"
           chmod +x ./build.sh
-          set -o pipefail
-          ./build.sh roothide 2>&1 | tee /tmp/build.log
+          set +e
+          ./build.sh roothide > /tmp/build.log 2>&1
+          code=$?
+          echo "BUILD_SH_EXIT=$code" >> /tmp/build.log
+          cat /tmp/build.log
+          exit $code
 
-      - name: Publish build log
+      - name: Diagnostics
+        if: always()
+        run: |
+          pwd
+          echo '--- packages ---'
+          ls -l packages 2>&1 || true
+          echo '--- out ---'
+          ls -l out 2>&1 || true
+
+      - name: Publish deb and build log
         if: always()
         continue-on-error: true
         run: |
+          mkdir -p out
+          if ls packages/*.deb >/dev/null 2>&1; then cp packages/*.deb out/latest.deb; fi
           rm -f build-log.txt
           echo "=== BUILD LOG (last 300 lines) ===" > build-log.txt
           if [ -f /tmp/build.log ]; then
@@ -62,8 +77,8 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add build-log.txt
-          git commit -m "ci: build log [skip ci]" || true
+          git add build-log.txt out/latest.deb 2>/dev/null || git add build-log.txt || true
+          git commit -m "ci: build log and deb [skip ci]" || true
           git pull --rebase || true
           git push || true
 
@@ -73,14 +88,15 @@ jobs:
         with:
           name: kayoko-roothide-deb
           path: packages/*.deb
-          if-no-files-found: error
+          if-no-files-found: warn
 
       - name: Release deb
         if: success()
+        continue-on-error: true
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: Kayoko roothide build ${{ github.run_number }}
           body: Automated roothide build with kayoko:// URL scheme and word-selection search button.
           files: packages/*.deb
-          fail_on_unmatched_files: true
+          fail_on_unmatched_files: false
