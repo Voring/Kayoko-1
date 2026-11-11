@@ -53,8 +53,13 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          if [ ! -f /tmp/build.log ]; then echo "no log" > build-log.txt; fi
-          { echo ''''``````'; tail -n 300 /tmp/build.log | sed 's/[[:cntrl:]]//g'; echo ''''``````'; } > build-log.txt
+          rm -f build-log.txt
+          echo "=== BUILD LOG (last 300 lines) ===" > build-log.txt
+          if [ -f /tmp/build.log ]; then
+            tail -n 300 /tmp/build.log | sed 's/[[:cntrl:]]//g' >> build-log.txt
+          else
+            echo "no log produced" >> build-log.txt
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add build-log.txt
