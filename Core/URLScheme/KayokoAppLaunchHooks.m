@@ -2,10 +2,8 @@
 //  KayokoAppLaunchHooks.m
 //  Kayoko
 //
-//  外部（快捷指令 / 其他 App / 终端）打开 kayoko:// 时，LaunchServices 会先把请求
-//  交给 SpringBoard 去“启动”认领该 scheme 的 KayokoURLHandler.app，于是屏幕上会
-//  闪一下空白 App。这里尝试在启动前接住。同时把安装/触发情况写入 diag.txt，
-//  供 kayoko://diag 把信息贴到剪贴板回传。
+//  尝试在 SpringBoard 侧拦截“为 URL 启动 App”的请求，避免 kayoko:// 打开时
+//  闪一下空白 App。同时把安装/触发/方法列表写入 diag.txt 供诊断。
 //
 
 #import <CaptainHook/CaptainHook.h>
@@ -62,6 +60,28 @@ static void KayokoAppLaunchDiag(NSString *line) {
     }
 }
 
+static void KayokoAppLaunchDumpMethods(NSString *className, NSString *keywords) {
+    Class cls = NSClassFromString(className);
+    if (!cls) {
+        KayokoAppLaunchDiag([NSString stringWithFormat:@"dump %@: class NOT found", className]);
+        return;
+    }
+    unsigned int count = 0;
+    Method *methods = class_copyMethodList(cls, &count);
+    NSMutableArray<NSString *> *names = [NSMutableArray array];
+    for (unsigned int index = 0; index < count; index++) {
+        NSString *name = NSStringFromSelector(method_getName(methods[index]));
+        if (![keywords length] || [name rangeOfString:keywords options:NSCaseInsensitiveSearch].location != NSNotFound) {
+            [names addObject:name];
+        }
+    }
+    free(methods);
+    NSUInteger total = [names count];
+    NSArray<NSString *> *shown = total > 24 ? [names subarrayWithRange:NSMakeRange(0, 24)] : names;
+    KayokoAppLaunchDiag([NSString stringWithFormat:@"dump %@ (%lu/%u): %@", className, (unsigned long)total, count,
+                                                   [shown componentsJoinedByString:@" | "]]);
+}
+
 CHOptimizedMethod6(self, void, FBSystemService, activateApplication, id, application, requestID, unsigned int,
                    requestID, options, id, options, source, id, source, originalSource, id, originalSource, withResult,
                    id, result) {
@@ -111,6 +131,11 @@ static void KayokoInstallAppLaunchHooks(void) {
         }
     } else {
         KayokoAppLaunchDiag(@"install: method NOT found");
+        KayokoAppLaunchDumpMethods(@"FBSystemService", @"");
+        KayokoAppLaunchDumpMethods(@"FBApplicationProcess", @"open|launch|url|activat");
+        KayokoAppLaunchDumpMethods(@"FBWorkspace", @"open|launch|url|activat");
+        KayokoAppLaunchDumpMethods(@"SBMainWorkspace", @"open|launch|url|activat");
+        KayokoAppLaunchDumpMethods(@"LSApplicationWorkspace", @"open|url|launch");
     }
 }
 
