@@ -1,144 +1,143 @@
 === BUILD LOG (last 300 lines) ===
-[0;32m==> [1;39mCompiling Manager/KayokoHistoryChangeNotifier.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoHistoryMigrator.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoHistoryRepository.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoHistoryRepository.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoKeyboardShortcutSender.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoHistoryStore.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoImageEditPresenter.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoPasteboardItem.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoHistoryStore.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoKeyboardShortcutSender.m (arm64)…[m
+[0;32m==> [1;39mCompiling KayokoPasteTipHooks.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Manager/KayokoPasteboardItem.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoImageEditPresenter.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoPasteboardManager.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Manager/KayokoSearchCriteria.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Helper/KayokoSwipeUpGestureRecognizer.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Manager/KayokoRichTextRepresentation.m (arm64)…[m
 [0;32m==> [1;39mCompiling Manager/KayokoPasteboardManager.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoRichTextRepresentation.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Manager/KayokoSnapperIntegration.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoSearchCriteria.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoActivitySharePresenter.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Manager/KayokoSystemTranslationPresenter.m (arm64)…[m
 [0;32m==> [1;39mCompiling Manager/KayokoTextActionPresenter.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoThumbnailCache.m (arm64)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoHistoryChangeNotifier.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Actions/KayokoHistoryItemActionHandler.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoSnapperIntegration.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoThumbnailCache.m (arm64)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoHistoryMigrator.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoClearConfirmationViewController.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoSystemTranslationPresenter.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoHistoryRepository.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoHistoryListViewController.m (arm64)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoNoteEditorViewController.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoTextActionPresenter.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoHistoryStore.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoPasteboardItem.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoKeyboardShortcutSender.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoImageEditPresenter.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoSearchCriteria.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoMainViewController.m (arm64)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoRichTextRepresentation.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoPasteboardManager.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoSnapperIntegration.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoNoteEditorViewController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoPreviewViewController.m (arm64)…[m
-[0;32m==> [1;39mCompiling Manager/KayokoThumbnailCache.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Actions/KayokoHistoryItemActionHandler.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoSystemTranslationPresenter.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoTextActionPresenter.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoSearchTokenListViewController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoTextEditorViewController.m (arm64)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoClearConfirmationViewController.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Actions/KayokoHistoryItemActionHandler.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Manager/KayokoThumbnailCache.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Coordinators/KayokoExternalHideCoordinator.m (arm64)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoHistoryListViewController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoWordSelectionViewController.m (arm64)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoClearConfirmationViewController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Coordinators/KayokoHistoryController.m (arm64)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoNoteEditorViewController.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoMainViewController.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoHistoryListViewController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Models/KayokoApplicationMetadataProvider.m (arm64)…[m
-[0;32m==> [1;39mCompiling Coordinators/KayokoSearchController.m (arm64)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoNoteEditorViewController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Models/KayokoTableDataStore.m (arm64)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoPreviewViewController.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoTextEditorViewController.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoSearchTokenListViewController.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Models/KayokoTableViewCellContentProvider.m (arm64)…[m
+[0;32m==> [1;39mCompiling Coordinators/KayokoSearchController.m (arm64)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoMainViewController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Models/KayokoTagCatalog.m (arm64)…[m
-[0;32m==> [1;39mCompiling Models/KayokoTagColorFormatter.m (arm64)…[m
+[0;32m==> [1;39mCompiling Models/KayokoTableViewCellContentProvider.m (arm64)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoPreviewViewController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Models/KayokoWordSelectionTokenizer.m (arm64)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoWordSelectionViewController.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Coordinators/KayokoExternalHideCoordinator.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Models/KayokoTagColorFormatter.m (arm64)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoSearchTokenListViewController.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoTextEditorViewController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Presentation/KayokoPanelPresentationController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoClearConfirmationView.m (arm64)…[m
 [0;32m==> [1;39mCompiling Presentation/KayokoSearchPresentationController.m (arm64)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoWordSelectionViewController.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Coordinators/KayokoExternalHideCoordinator.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEdgeFadingCollectionView.m (arm64)…[m
-[0;32m==> [1;39mCompiling Coordinators/KayokoHistoryController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEdgeFadeMaskController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEdgeFadingScrollView.m (arm64)…[m
+[0;32m==> [1;39mCompiling Coordinators/KayokoHistoryController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEdgeFadingTableView.m (arm64)…[m
-[0;32m==> [1;39mCompiling Models/KayokoApplicationMetadataProvider.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEdgeFadingTextView.m (arm64)…[m
-[0;32m==> [1;39mCompiling Models/KayokoTableDataStore.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Coordinators/KayokoSearchController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEmptyStateView.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoFavoritesTableView.m (arm64)…[m
-[0;32m==> [1;39mCompiling Models/KayokoTagCatalog.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Models/KayokoTableViewCellContentProvider.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoGrabberView.m (arm64)…[m
+[0;32m==> [1;39mCompiling Coordinators/KayokoSearchController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoHeaderView.m (arm64)…[m
-[0;32m==> [1;39mCompiling Models/KayokoTagColorFormatter.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoHistoryListView.m (arm64)…[m
-[0;32m==> [1;39mCompiling Models/KayokoWordSelectionTokenizer.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoHistoryTableView.m (arm64)…[m
+[0;32m==> [1;39mCompiling Views/KayokoHistoryListView.m (arm64)…[m
+[0;32m==> [1;39mCompiling Models/KayokoApplicationMetadataProvider.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Models/KayokoTableDataStore.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoMainView.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoNoteEditorView.m (arm64)…[m
-[0;32m==> [1;39mCompiling Presentation/KayokoPanelPresentationController.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Models/KayokoTableViewCellContentProvider.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Models/KayokoTagCatalog.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoPreviewView.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoSearchBar.m (arm64)…[m
+[0;32m==> [1;39mCompiling Models/KayokoWordSelectionTokenizer.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Models/KayokoTagColorFormatter.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoSearchTokenCollectionView.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoSearchTokenCollectionViewCell.m (arm64)…[m
+[0;32m==> [1;39mCompiling Presentation/KayokoPanelPresentationController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Presentation/KayokoSearchPresentationController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoSearchTokenSectionView.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoTableViewCell.m (arm64)…[m
-[0;32m==> [1;39mCompiling Views/KayokoTableViewCellContent.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoClearConfirmationView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoTagChipBarView.m (arm64)…[m
-[0;32m==> [1;39mCompiling Views/KayokoTagDotView.m (arm64)…[m
-[0;32m==> [1;39mCompiling Views/KayokoTextEditorView.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEdgeFadeMaskController.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoWordTokenView.m (arm64)…[m
-[0;32m==> [1;39mCompiling Views/KayokoWordSelectionView.m (arm64)…[m
-[0;32m==> [1;39mCompiling URLScheme/KayokoURLSchemeHandler.m (arm64)…[m
+[0;32m==> [1;39mCompiling Views/KayokoTableViewCellContent.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEdgeFadingCollectionView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterApplicationBridge.m (arm64)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterCatalog.m (arm64)…[m
-[0;32m==> [1;39mCompiling URLScheme/KayokoURLSchemeServer.m (arm64)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterOrderStore.m (arm64)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTag.m (arm64)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTagStore.m (arm64)…[m
+[0;32m==> [1;39mCompiling Views/KayokoTagChipBarView.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEdgeFadingScrollView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeBridge.m (arm64)…[m
-[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeProtocol.m (arm64)…[m
+[0;32m==> [1;39mCompiling Views/KayokoTagDotView.m (arm64)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEdgeFadingTextView.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEdgeFadingTableView.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Views/KayokoEmptyStateView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoTextEditorView.m (arm64)…[m
+[0;32m==> [1;39mCompiling Views/KayokoFavoritesTableView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoGrabberView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoHeaderView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoWordSelectionView.m (arm64)…[m
+[0;32m==> [1;39mCompiling Views/KayokoHistoryTableView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoHistoryListView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoWordTokenView.m (arm64)…[m
+[0;32m==> [1;39mCompiling Views/KayokoNoteEditorView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoMainView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoPreviewView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoSearchBar.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoSearchTokenCollectionView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling URLScheme/KayokoURLSchemeHandler.m (arm64)…[m
+[0;32m==> [1;39mCompiling Views/KayokoSearchTokenCollectionViewCell.m (arm64e)…[m
+[0;32m==> [1;39mCompiling URLScheme/KayokoURLSchemeServer.m (arm64)…[m
+[0;32m==> [1;39mCompiling Views/KayokoSearchTokenSectionView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoTableViewCell.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoTableViewCellContent.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterApplicationBridge.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterCatalog.m (arm64)…[m
+[0;32m==> [1;39mCompiling Views/KayokoTagDotView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoTagChipBarView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoTextEditorView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterOrderStore.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTag.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTagStore.m (arm64)…[m
+[0;32m==> [1;39mCompiling Views/KayokoWordTokenView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Views/KayokoWordSelectionView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling URLScheme/KayokoURLSchemeHandler.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeBridge.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterCatalog.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterApplicationBridge.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeProtocol.m (arm64)…[m
+[0;32m==> [1;39mCompiling URLScheme/KayokoURLSchemeServer.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTag.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterOrderStore.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTagStore.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeBridge.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeProtocol.m (arm64e)…[m
 [0;33m==> [1;39mLinking tweak KayokoCore (arm64)…[m
 ld: warning: -multiply_defined is obsolete
 [0;34m==> [1;39mGenerating debug symbols for KayokoCore…[m
 [0;34m==> [1;39mStripping KayokoCore (arm64)…[m
-[0;32m==> [1;39mCompiling Views/KayokoGrabberView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoFavoritesTableView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoHeaderView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoHistoryListView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoHistoryTableView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoMainView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoNoteEditorView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoSearchBar.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoPreviewView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoSearchTokenCollectionViewCell.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoSearchTokenCollectionView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoSearchTokenSectionView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoTableViewCell.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoTableViewCellContent.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoTagChipBarView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoTagDotView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoTextEditorView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoWordSelectionView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Views/KayokoWordTokenView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling URLScheme/KayokoURLSchemeHandler.m (arm64e)…[m
-[0;32m==> [1;39mCompiling URLScheme/KayokoURLSchemeServer.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterCatalog.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterApplicationBridge.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterOrderStore.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTag.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTagStore.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeProtocol.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeBridge.m (arm64e)…[m
 [0;33m==> [1;39mLinking tweak KayokoCore (arm64e)…[m
 ld: warning: -multiply_defined is obsolete
 [0;34m==> [1;39mGenerating debug symbols for KayokoCore…[m
@@ -151,36 +150,36 @@ ld: warning: -multiply_defined is obsolete
 [0;32m==> [1;39mCompiling KayokoHelperConfiguration.m (arm64)…[m
 [0;32m==> [1;39mCompiling KayokoHelperProcessContext.m (arm64e)…[m
 [0;32m==> [1;39mCompiling KayokoHelperProcessContext.m (arm64)…[m
-[0;32m==> [1;39mCompiling KayokoHelper.m (arm64)…[m
 [0;32m==> [1;39mCompiling KayokoHelper.m (arm64e)…[m
+[0;32m==> [1;39mCompiling KayokoHelper.m (arm64)…[m
 [0;32m==> [1;39mCompiling KayokoHelperHookInstaller.m (arm64e)…[m
 [0;32m==> [1;39mCompiling KayokoHelperHookInstaller.m (arm64)…[m
 [0;32m==> [1;39mCompiling KayokoHelperLocalization.m (arm64e)…[m
 [0;32m==> [1;39mCompiling KayokoHelperLocalization.m (arm64)…[m
+[0;32m==> [1;39mCompiling KayokoPredictionBarHooks.m (arm64)…[m
 [0;32m==> [1;39mCompiling KayokoPredictionBarHooks.m (arm64e)…[m
 [0;32m==> [1;39mCompiling KayokoHelperRuntime.m (arm64e)…[m
-[0;32m==> [1;39mCompiling KayokoPredictionBarHooks.m (arm64)…[m
 [0;32m==> [1;39mCompiling KayokoHelperRuntime.m (arm64)…[m
 [0;32m==> [1;39mCompiling KayokoCalloutMenuHooks.m (arm64e)…[m
 [0;32m==> [1;39mCompiling KayokoCalloutMenuHooks.m (arm64)…[m
-[0;32m==> [1;39mCompiling KayokoInputSwitcherHooks.mm (arm64e)…[m
-[0;32m==> [1;39mCompiling KayokoInputSwitcherHooks.mm (arm64)…[m
 [0;32m==> [1;39mCompiling KayokoDictationHooks.m (arm64)…[m
-[0;32m==> [1;39mCompiling KayokoSwipeUpGestureRecognizer.m (arm64)…[m
-[0;32m==> [1;39mCompiling KayokoDictationHooks.m (arm64e)…[m
-[0;32m==> [1;39mCompiling KayokoSwipeUpGestureRecognizer.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeBridge.m (arm64)…[m
-[0;32m==> [1;39mCompiling KayokoSwipeUpHooks.m (arm64)…[m
+[0;32m==> [1;39mCompiling KayokoInputSwitcherHooks.mm (arm64)…[m
 [0;32m==> [1;39mCompiling KayokoURLSchemeHooks.m (arm64)…[m
+[0;32m==> [1;39mCompiling KayokoSwipeUpGestureRecognizer.m (arm64)…[m
+[0;32m==> [1;39mCompiling KayokoSwipeUpHooks.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeBridge.m (arm64)…[m
+[0;32m==> [1;39mCompiling KayokoInputSwitcherHooks.mm (arm64e)…[m
 [0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeProtocol.m (arm64)…[m
 [0;33m==> [1;39mLinking tweak KayokoHelper (arm64)…[m
 ld: warning: -multiply_defined is obsolete
 [0;34m==> [1;39mGenerating debug symbols for KayokoHelper…[m
 [0;34m==> [1;39mStripping KayokoHelper (arm64)…[m
+[0;32m==> [1;39mCompiling KayokoDictationHooks.m (arm64e)…[m
+[0;32m==> [1;39mCompiling KayokoSwipeUpGestureRecognizer.m (arm64e)…[m
 [0;32m==> [1;39mCompiling KayokoSwipeUpHooks.m (arm64e)…[m
 [0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeBridge.m (arm64e)…[m
-[0;32m==> [1;39mCompiling KayokoURLSchemeHooks.m (arm64e)…[m
 [0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeProtocol.m (arm64e)…[m
+[0;32m==> [1;39mCompiling KayokoURLSchemeHooks.m (arm64e)…[m
 [0;33m==> [1;39mLinking tweak KayokoHelper (arm64e)…[m
 ld: warning: -multiply_defined is obsolete
 [0;34m==> [1;39mGenerating debug symbols for KayokoHelper…[m
@@ -190,68 +189,68 @@ ld: warning: -multiply_defined is obsolete
 [1;31m> [1;3;39mMaking all in Preferences…[m
 [1;31m> [1;3;39mMaking all for bundle KayokoPreferences…[m
 [0;35m==> [1;39mCopying resource directories into the bundle wrapper…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoApplicationBlacklistListController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoApplicationBlacklistListController.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoApplicationBlacklistListController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoAdvancedOptionsListController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoAdvancedOptionsListController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoCreditsListController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoCreditsListController.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoFilterItemOrderViewController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoFilterItemOrderViewController.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoFilterItemOrderViewController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoFilterManagementViewController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoFilterManagementViewController.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoListItemsController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoListItemsController.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoRespringControllerSupport.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoListItemsController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoRespringControllerSupport.m (arm64)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoRespringControllerSupport.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoRootListController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoRootListController.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Controllers/KayokoTagEditorViewController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoTagEditorViewController.m (arm64)…[m
+[0;32m==> [1;39mCompiling Controllers/KayokoTagEditorViewController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoTagManagementViewController.m (arm64)…[m
 [0;32m==> [1;39mCompiling Controllers/KayokoTagManagementViewController.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Cells/KayokoAboutLinkCell.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Cells/KayokoAboutLinkCell.m (arm64)…[m
-[0;32m==> [1;39mCompiling Cells/KayokoHeaderCell.m (arm64)…[m
 [0;32m==> [1;39mCompiling Cells/KayokoHeaderCell.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Cells/KayokoAboutLinkCell.m (arm64)…[m
 [0;32m==> [1;39mCompiling Cells/KayokoLinkCell.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Cells/KayokoLinkCell.m (arm64)…[m
-[0;32m==> [1;39mCompiling Cells/KayokoSliderCell.m (arm64)…[m
-[0;32m==> [1;39mCompiling Cells/KayokoStepSliderCell.m (arm64)…[m
-[0;32m==> [1;39mCompiling Cells/KayokoTagTableViewCell.m (arm64)…[m
 [0;32m==> [1;39mCompiling Cells/KayokoSliderCell.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Utilities/KayokoFilterApplicationCatalog.m (arm64)…[m
-[0;32m==> [1;39mCompiling Utilities/KayokoKeyboardAvoidanceCoordinator.m (arm64)…[m
-[0;32m==> [1;39mCompiling Utilities/KayokoSearchPresentation.m (arm64)…[m
 [0;32m==> [1;39mCompiling Cells/KayokoStepSliderCell.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Utilities/KayokoStatusOverlayView.m (arm64)…[m
-[0;32m==> [1;39mCompiling Utilities/KayokoTagColorFormatter.m (arm64)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterApplicationBridge.m (arm64)…[m
-[0;32m==> [1;39mCompiling Utilities/KayokoTagPlaceholderView.m (arm64)…[m
 [0;32m==> [1;39mCompiling Cells/KayokoTagTableViewCell.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterCatalog.m (arm64)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterOrderStore.m (arm64)…[m
-[0;32m==> [1;39mCompiling Utilities/KayokoFilterApplicationCatalog.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTag.m (arm64)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTagStore.m (arm64)…[m
+[0;32m==> [1;39mCompiling Cells/KayokoHeaderCell.m (arm64)…[m
 [0;32m==> [1;39mCompiling Utilities/KayokoKeyboardAvoidanceCoordinator.m (arm64e)…[m
-[0;33m==> [1;39mLinking bundle KayokoPreferences (arm64)…[m
-ld: warning: -multiply_defined is obsolete
-[0;34m==> [1;39mGenerating debug symbols for KayokoPreferences…[m
-[0;34m==> [1;39mStripping KayokoPreferences (arm64)…[m
+[0;32m==> [1;39mCompiling Utilities/KayokoFilterApplicationCatalog.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Utilities/KayokoSearchPresentation.m (arm64e)…[m
 [0;32m==> [1;39mCompiling Utilities/KayokoStatusOverlayView.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterCatalog.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Cells/KayokoLinkCell.m (arm64)…[m
 [0;32m==> [1;39mCompiling Utilities/KayokoTagColorFormatter.m (arm64e)…[m
-[0;32m==> [1;39mCompiling Utilities/KayokoTagPlaceholderView.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterCatalog.m (arm64e)…[m
 [0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterApplicationBridge.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTag.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Utilities/KayokoTagPlaceholderView.m (arm64e)…[m
 [0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterOrderStore.m (arm64e)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTag.m (arm64e)…[m
+[0;32m==> [1;39mCompiling Cells/KayokoSliderCell.m (arm64)…[m
 [0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTagStore.m (arm64e)…[m
 [0;33m==> [1;39mLinking bundle KayokoPreferences (arm64e)…[m
 ld: warning: -multiply_defined is obsolete
 [0;34m==> [1;39mGenerating debug symbols for KayokoPreferences…[m
 [0;34m==> [1;39mStripping KayokoPreferences (arm64e)…[m
+[0;32m==> [1;39mCompiling Cells/KayokoTagTableViewCell.m (arm64)…[m
+[0;32m==> [1;39mCompiling Cells/KayokoStepSliderCell.m (arm64)…[m
+[0;32m==> [1;39mCompiling Utilities/KayokoFilterApplicationCatalog.m (arm64)…[m
+[0;32m==> [1;39mCompiling Utilities/KayokoKeyboardAvoidanceCoordinator.m (arm64)…[m
+[0;32m==> [1;39mCompiling Utilities/KayokoSearchPresentation.m (arm64)…[m
+[0;32m==> [1;39mCompiling Utilities/KayokoTagColorFormatter.m (arm64)…[m
+[0;32m==> [1;39mCompiling Utilities/KayokoStatusOverlayView.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterApplicationBridge.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterCatalog.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterOrderStore.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTag.m (arm64)…[m
+[0;32m==> [1;39mCompiling Utilities/KayokoTagPlaceholderView.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTagStore.m (arm64)…[m
+[0;33m==> [1;39mLinking bundle KayokoPreferences (arm64)…[m
+ld: warning: -multiply_defined is obsolete
+[0;34m==> [1;39mGenerating debug symbols for KayokoPreferences…[m
+[0;34m==> [1;39mStripping KayokoPreferences (arm64)…[m
 [0;34m==> [1;39mMerging bundle KayokoPreferences…[m
 [0;34m==> [1;39mSigning KayokoPreferences…[m
 [1;31m> [1;3;39mMaking all in Updater…[m
@@ -263,9 +262,9 @@ ld: warning: -multiply_defined is obsolete
 [0;32m==> [1;39mCompiling KayokoPostinstallUpdater.m (arm64)…[m
 [0;32m==> [1;39mCompiling ../Core/Manager/KayokoHistoryMigrator.m (arm64)…[m
 [0;32m==> [1;39mCompiling ../Core/Manager/KayokoPasteboardItem.m (arm64)…[m
-[0;32m==> [1;39mCompiling ../Core/Manager/KayokoHistoryStore.m (arm64)…[m
-[0;32m==> [1;39mCompiling ../Core/Manager/KayokoSearchCriteria.m (arm64)…[m
 [0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTag.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Core/Manager/KayokoSearchCriteria.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Core/Manager/KayokoHistoryStore.m (arm64)…[m
 [0;32m==> [1;39mCompiling ../Core/Manager/KayokoRichTextRepresentation.m (arm64)…[m
 [0;32m==> [1;39mCompiling ../Shared/Tags/KayokoTagStore.m (arm64)…[m
 [0;32m==> [1;39mCompiling ../Shared/Tags/KayokoFilterCatalog.m (arm64)…[m
@@ -278,17 +277,17 @@ ld: warning: -multiply_defined is obsolete
 [1;31m> [1;3;39mMaking all for application KayokoURLHandler…[m
 [0;35m==> [1;39mCopying resource directories into the application wrapper…[m
 [0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeBridge.m (arm64e)…[m
-[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeProtocol.m (arm64e)…[m
 [0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeBridge.m (arm64)…[m
+[0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeProtocol.m (arm64e)…[m
 [0;32m==> [1;39mCompiling ../Shared/URLScheme/KayokoURLSchemeProtocol.m (arm64)…[m
 [0;32m==> [1;39mCompiling main.m (arm64e)…[m
+[0;32m==> [1;39mCompiling main.m (arm64)…[m
 [0;33m==> [1;39mLinking application KayokoURLHandler (arm64e)…[m
 ld: unknown options: -change 
 clang: [0;1;31merror: [0m[1mlinker command failed with exit code 1 (use -v to see invocation)[0m
 gmake[4]: *** [/Users/runner/theos/makefiles/instance/application.mk:50: /Users/runner/work/Kayoko-1/Kayoko-1/.theos/obj/arm64e/KayokoURLHandler.app/KayokoURLHandler] Error 1
 gmake[3]: *** [/Users/runner/theos/makefiles/instance/application.mk:50: /Users/runner/work/Kayoko-1/Kayoko-1/.theos/obj/arm64e/KayokoURLHandler.app/KayokoURLHandler] Error 2
 gmake[3]: *** Waiting for unfinished jobs....
-[0;32m==> [1;39mCompiling main.m (arm64)…[m
 [0;33m==> [1;39mLinking application KayokoURLHandler (arm64)…[m
 ld: unknown options: -change 
 clang: [0;1;31merror: [0m[1mlinker command failed with exit code 1 (use -v to see invocation)[0m
@@ -299,3 +298,4 @@ gmake[1]: *** [/Users/runner/theos/makefiles/master/rules.mk:146: KayokoURLHandl
 gmake: *** [/Users/runner/theos/makefiles/master/aggregate.mk:12: internal-all] Error 2
 
 ==> Cleaning build cache…
+BUILD_SH_EXIT=2
