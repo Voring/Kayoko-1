@@ -95,6 +95,18 @@ CHOptimizedMethod5(self, void, FBSystemService, openApplication, id, application
                    id, originator, requestID, unsigned int, requestID, completion, id, completion) {
     NSURL *URL = KayokoURLFromOpenOptions(options);
 
+    // 只用“我们自己的 App + kayoko scheme”这一种请求写日志，避免刷屏导致卡顿。
+    NSString *bundleID = nil;
+    @try {
+        bundleID = [application respondsToSelector:@selector(bundleIdentifier)] ? [application bundleIdentifier] : nil;
+    } @catch (__unused NSException *exception) {
+        bundleID = nil;
+    }
+    if ([bundleID hasPrefix:@"com.mlgm.kayoko"] || KayokoURLSchemeIsKayokoURL(URL)) {
+        KayokoAppLaunchDiag([NSString stringWithFormat:@"call bid=%@ url=%@", bundleID ?: @"(nil)",
+                                                       [URL absoluteString] ?: @"(nil)"]);
+    }
+
     if (KayokoURLSchemeIsKayokoURL(URL)) {
         KayokoAppLaunchDiag([NSString stringWithFormat:@"hit openApplication url=%@", [URL absoluteString]]);
 
@@ -137,31 +149,28 @@ static void KayokoInstallAppLaunchHooks(void) {
 
     SEL openSelector = @selector(openApplication:withOptions:originator:requestID:completion:);
     Method openMethod = class_getInstanceMethod(systemServiceClass, openSelector);
-    if (openMethod) {
-        const char *types = method_getTypeEncoding(openMethod);
-        KayokoAppLaunchDiag([NSString stringWithFormat:@"install: openApplication method argc=%u type=%s",
-                                                       method_getNumberOfArguments(openMethod),
-                                                       types ? types : "(null)"]);
-        if (method_getNumberOfArguments(openMethod) == 7) {
-            CHHook5(FBSystemService, openApplication, withOptions, originator, requestID, completion);
-            KayokoAppLaunchDiag(@"install: hook installed");
-        } else {
-            KayokoAppLaunchDiag(@"install: argc mismatch, hook skipped");
-        }
-    } else {
+    if (!openMethod) {
         KayokoAppLaunchDiag(@"install: openApplication method NOT found");
+        return;
     }
+    if (method_getNumberOfArguments(openMethod) != 7) {
+        KayokoAppLaunchDiag(@"install: openApplication argc mismatch");
+        return;
+    }
+    CHHook5(FBSystemService, openApplication, withOptions, originator, requestID, completion);
+    KayokoAppLaunchDiag(@"install: hook installed");
 }
 
 __attribute__((constructor)) static void KayokoAppLaunchHooksEntry(void) {
     @autoreleasepool {
-        if (NSClassFromString(@"FBSystemService") == nil) {
-            return;
-        }
-        KayokoInstallAppLaunchHooks();
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
-                       dispatch_get_main_queue(), ^{
-                         KayokoInstallAppLaunchHooks();
-                       });
+        // 只挂钩一次。重复 CHHook 同一方法会形成递归/竞态，导致 SpringBoard 崩溃。
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+          if (NSClassFromString(@"FBSystemService") == nil) {
+              KayokoAppLaunchDiag(@"install: FBSystemService 尚未加载，跳过");
+              return;
+          }
+          KayokoInstallAppLaunchHooks();
+        });
     }
 }
