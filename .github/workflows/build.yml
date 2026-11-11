@@ -10,7 +10,8 @@ permissions:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-15-intel
+    timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,7 +32,7 @@ jobs:
         run: |
           git clone --recursive --depth 1 https://github.com/roothide/theos.git "$HOME/theos"
           git clone --depth 1 https://github.com/theos/sdks.git "$HOME/theos/sdks"
-          ls "$HOME/theos/sdks" | head -30
+          ls "$HOME/theos/sdks"
 
       - name: Build roothide package
         run: |
@@ -49,12 +50,11 @@ jobs:
       - name: Commit applied source changes
         continue-on-error: true
         run: |
-          set -x
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B main
           git add -A
-          git commit -m "feat: kayoko:// URL scheme + word-selection search button [skip ci]" || echo "nothing to commit"
+          git commit -m "chore: refresh applied source [skip ci]" || echo "nothing to commit"
           git fetch origin main || true
           git rebase --autostash origin/main || (git rebase --abort || true)
-          git push origin main || echo "push failed, code still built"
+          git push origin main || echo "push failed"
