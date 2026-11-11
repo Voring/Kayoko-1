@@ -2,12 +2,14 @@
 //  KayokoAppLaunchHooks.m
 //  Kayoko
 //
-//  尝试在 SpringBoard 侧拦截“为 URL 启动 App”的请求，避免 kayoko:// 打开时
-//  闪一下空白 App。同时把安装/触发/方法列表写入 diag.txt 供诊断。
+//  在 SpringBoard 侧拦截“为 URL 启动 App”的请求，避免 kayoko:// 打开时
+//  闪一下空白 App。
 //
 //  iOS 16.4.1 上 FBSystemService 的真实入口是：
 //  - openApplication:withOptions:originator:requestID:completion:
-//  URL 藏在 options.url 里。
+//  URL 藏在 options.url 里。拦截后就地执行面板动作，不放行原始启动请求。
+//
+//  kayoko://diag 也在这一层直接处理：把诊断信息写进系统剪贴板，不启动 App。
 //
 
 #import <CaptainHook/CaptainHook.h>
@@ -95,6 +97,24 @@ CHOptimizedMethod5(self, void, FBSystemService, openApplication, id, application
 
     if (KayokoURLSchemeIsKayokoURL(URL)) {
         KayokoAppLaunchDiag([NSString stringWithFormat:@"hit openApplication url=%@", [URL absoluteString]]);
+
+        // kayoko://diag：完全不启动 App，直接把诊断信息写进系统剪贴板，
+        // 这样在“拦截已生效”的情况下也能把状态回传。
+        NSString *hostOrPath = [[[URL host] ?: @"" lowercaseString] stringByAppendingString:[[URL path] lowercaseString]];
+        if ([hostOrPath rangeOfString:@"diag"].location != NSNotFound) {
+            NSString *body = [NSString stringWithContentsOfFile:KayokoAppLaunchDiagPath()
+                                                        encoding:NSUTF8StringEncoding
+                                                           error:nil];
+            NSString *text = [NSString stringWithFormat:@"=== Kayoko URL diag (springboard) ===\n%@"
+                                                        @"handled by SpringBoard at %@ (App 未被启动)\n",
+                                                        body ?: @"(diag.txt 为空)\n", [NSDate date]];
+            [UIPasteboard generalPasteboard].string = text;
+            if (completion) {
+                ((void (^)(id, id))completion)(nil, nil);
+            }
+            return;
+        }
+
         KayokoURLSchemeInterceptOpenURL(URL, nil);
         if (completion) {
             ((void (^)(id, id))completion)(nil, nil);
