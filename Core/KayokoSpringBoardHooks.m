@@ -34,6 +34,12 @@ CHDeclareClass(SBMainSwitcherViewController);
 CHDeclareClass(SBMainSwitcherControllerCoordinator);
 CHDeclareClass(SBApplicationController);
 CHDeclareClass(_UISystemGestureWindow);
+CHDeclareClass(LSApplicationWorkspace);
+
+@interface LSApplicationWorkspace : NSObject
+- (BOOL)openURL:(NSURL *)URL withOptions:(NSDictionary *)options;
+- (BOOL)openSensitiveURL:(NSURL *)URL withOptions:(NSDictionary *)options;
+@end
 
 @interface SpringBoard : UIApplication
 - (void)applicationDidFinishLaunching:(id)application;
@@ -373,6 +379,27 @@ CHOptimizedMethod1(self, BOOL, UIApplication, openURL, NSURL *, URL) {
         return YES;
     }
     return CHSuper1(UIApplication, openURL, URL);
+}
+
+#pragma mark - LaunchServices Hooks
+
+// iOS 在 SpringBoard 内部先用 LaunchServices 查“哪个 App 认领这个 scheme”，
+// 查不到就直接弹“不支持的 URL / 尚未载入此 URL”。必须在这一次查找之前接管，
+// 否则 application:openURL: 根本不会被调用。
+CHOptimizedMethod2(self, BOOL, LSApplicationWorkspace, openURL, NSURL *, URL, withOptions, NSDictionary *,
+                   options) {
+    if (KayokoURLSchemeInterceptOpenURL(URL, nil)) {
+        return YES;
+    }
+    return CHSuper2(LSApplicationWorkspace, openURL, URL, withOptions, options);
+}
+
+CHOptimizedMethod2(self, BOOL, LSApplicationWorkspace, openSensitiveURL, NSURL *, URL, withOptions,
+                   NSDictionary *, options) {
+    if (KayokoURLSchemeInterceptOpenURL(URL, nil)) {
+        return YES;
+    }
+    return CHSuper2(LSApplicationWorkspace, openSensitiveURL, URL, withOptions, options);
 }
 
 #pragma mark - Visibility Hooks
@@ -801,6 +828,17 @@ CHOptimizedMethod3(self, void, FBScene, updateSettings, UIApplicationSceneSettin
     if (KayokoHookMethodMatches(springBoardClass, @selector(application:openURL:sourceApplication:annotation:),
                                 "B@:@@@@")) {
         CHHook4(SpringBoard, application, openURL, sourceApplication, annotation);
+    }
+
+    Class workspaceClass = NSClassFromString(@"LSApplicationWorkspace");
+    if (workspaceClass) {
+        CHLoadClass_(&LSApplicationWorkspace$, workspaceClass);
+        if (KayokoHookMethodMatches(workspaceClass, @selector(openURL:withOptions:), "B@:@@")) {
+            CHHook2(LSApplicationWorkspace, openURL, withOptions);
+        }
+        if (KayokoHookMethodMatches(workspaceClass, @selector(openSensitiveURL:withOptions:), "B@:@@")) {
+            CHHook2(LSApplicationWorkspace, openSensitiveURL, withOptions);
+        }
     }
 }
 
