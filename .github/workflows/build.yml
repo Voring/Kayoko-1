@@ -22,7 +22,7 @@ jobs:
       - name: Materialize merged sources
         run: |
           set -euo pipefail
-          curl -fsSL "https://aka.doubaocdn.com/s/mthaCkHnmv" -o /tmp/src.zip
+          curl -fsSL "https://aka.doubaocdn.com/s/5a72fCVTkX" -o /tmp/src.zip
           unzip -oq /tmp/src.zip -d /tmp/src
           rsync -a --delete --exclude '.git' --exclude '.github' /tmp/src/ ./
           git status --short | head -40
@@ -35,7 +35,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git diff --quiet && git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
           git add -A
-          git commit -m "merge: upstream mlgm66/Kayoko latest into fork [skip ci]"
+          git commit -m "sync: source snapshot (history-page filters) [skip ci]"
           git pull --rebase || true
           git push || true
 
@@ -118,6 +118,6 @@ jobs:
         with:
           tag_name: build-${{ github.run_number }}
           name: Kayoko roothide build ${{ github.run_number }}
-          body: Merged with upstream mlgm66/Kayoko latest, plus kayoko:// dispatch hooks and word-selection search button (auto-dismiss).
+          body: History (pasteboard) page now supports the same app/tag/category filters as favorites.
           files: packages/*.deb
           fail_on_unmatched_files: false
